@@ -9,3 +9,4 @@ case class BoolLiteral(value: Boolean) extends Literal
 case class IntLiteral(value: Int) extends Literal
 case class StringLiteral(value: String) extends Literal
 case class Variable(name: String) extends Expression
+case class IfExpression(condExpr: Expression, thenExpr: Expression, elseExpr: Expression) extends Expression

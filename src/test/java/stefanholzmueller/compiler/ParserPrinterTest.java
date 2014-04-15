@@ -30,6 +30,13 @@ public class ParserPrinterTest {
 		// assertParsedLiteral("\"back\\\"slash\"");
 	}
 
+	@Test
+	public void parseIfExpression() throws Exception {
+		assertParsed("if true then 1 else 0 fi", "if true then 1 else 0 fi");
+		assertParsed("if false\n  then \"\"\n  else \"hi\"\nfi",
+				"if false then \"\" else \"hi\" fi");
+	}
+
 	private void assertParsed(String input, String expected) {
 		AbstractSyntaxTree ast = parser.parse(input);
 		String string = printer.print(ast);
