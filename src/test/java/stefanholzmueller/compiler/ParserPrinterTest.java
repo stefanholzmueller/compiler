@@ -15,18 +15,30 @@ public class ParserPrinterTest {
 
 	@Test
 	public void parseIntegerLiteral() throws Exception {
-		assertParsed("123", "123");
+		assertParsedLiteral("123");
 	}
 
 	@Test
 	public void parseBooleanLiteral() throws Exception {
-		assertParsed("true", "true");
-		assertParsed("false", "false");
+		assertParsedLiteral("true");
+		assertParsedLiteral("false");
+	}
+
+	@Test
+	public void parseStringLiteral() throws Exception {
+		assertParsedLiteral("\"hi\"");
+		// assertParsedLiteral("\"back\\\"slash\"");
 	}
 
 	private void assertParsed(String input, String expected) {
 		AbstractSyntaxTree ast = parser.parse(input);
 		String string = printer.print(ast);
 		Assert.assertEquals(expected, string);
+	}
+
+	private void assertParsedLiteral(String literal) {
+		AbstractSyntaxTree ast = parser.parse(literal);
+		String string = printer.print(ast);
+		Assert.assertEquals(literal, string);
 	}
 }

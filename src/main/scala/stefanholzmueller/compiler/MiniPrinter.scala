@@ -6,6 +6,7 @@ class MiniPrinter extends Printer {
 			case Variable(name) => name
 			case BoolLiteral(value) => java.lang.Boolean.toString(value)
 			case IntLiteral(value) => Integer.toString(value)
+			case StringLiteral(value) => "\"" + value + "\""
 			case x: AST => x.toString()
 		}
 	}
