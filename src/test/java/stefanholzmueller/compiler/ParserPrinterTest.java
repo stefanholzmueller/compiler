@@ -18,6 +18,12 @@ public class ParserPrinterTest {
 		assertParsed("123", "123");
 	}
 
+	@Test
+	public void parseBooleanLiteral() throws Exception {
+		assertParsed("true", "true");
+		assertParsed("false", "false");
+	}
+
 	private void assertParsed(String input, String expected) {
 		AbstractSyntaxTree ast = parser.parse(input);
 		String string = printer.print(ast);

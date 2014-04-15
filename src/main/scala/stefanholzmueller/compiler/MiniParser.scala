@@ -7,8 +7,8 @@ import scala.util.parsing.combinator.PackratParsers
 class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	type Tokens = StdLexical
 	val lexical = new StdLexical
-	lexical.delimiters ++= Seq("(", ")")
-	lexical.reserved ++= Seq("if", "then", "else", "fi")
+	lexical.delimiters ++= Seq("(", ")", ";")
+	lexical.reserved ++= Seq("true", "false", "if", "then", "else", "fi")
 
 	def parseResult(source: String): ParseResult[AST] = {
 		val tokens = new lexical.Scanner(source)
@@ -22,18 +22,9 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 		}
 	}
 
-	lazy val ast: PackratParser[AST] = variable | numLiteral
+	lazy val ast: PackratParser[AST] = variable | boolLiteral | intLiteral
 	lazy val variable: PackratParser[Variable] = ident ^^ Variable
-	lazy val intLiteral: PackratParser[IntLiteral] = "\\d+" ^^ parseIntLiteral
-	lazy val numLiteral: PackratParser[IntLiteral] = numericLit ^^ parseNumLiteral
-
-	def parseIntLiteral(str: String): IntLiteral = {
-		val int = java.lang.Integer.parseInt(str)
-		IntLiteral(int)
-	}
-	def parseNumLiteral(str: String): IntLiteral = {
-		val int = java.lang.Integer.parseInt(str)
-		IntLiteral(int)
-	}
+	lazy val boolLiteral: PackratParser[BoolLiteral] = ("true" | "false") ^^ (str => BoolLiteral(java.lang.Boolean.parseBoolean(str)))
+	lazy val intLiteral: PackratParser[IntLiteral] = numericLit ^^ (str => IntLiteral(java.lang.Integer.parseInt(str)))
 
 }
