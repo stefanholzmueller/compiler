@@ -24,11 +24,10 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 
 	lazy val ast: PackratParser[AST] = variable | numLiteral
 	lazy val variable: PackratParser[Variable] = ident ^^ Variable
-	lazy val intLiteral: PackratParser[IntLiteral] = rep("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9") ^^ parseIntLiteral
+	lazy val intLiteral: PackratParser[IntLiteral] = "\\d+" ^^ parseIntLiteral
 	lazy val numLiteral: PackratParser[IntLiteral] = numericLit ^^ parseNumLiteral
 
-	def parseIntLiteral(digits: List[String]): IntLiteral = {
-		val str = digits.mkString("")
+	def parseIntLiteral(str: String): IntLiteral = {
 		val int = java.lang.Integer.parseInt(str)
 		IntLiteral(int)
 	}
