@@ -23,7 +23,8 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	}
 
 	lazy val ast: PackratParser[AST] = expression
-	lazy val expression: PackratParser[Expression] = variable | literal | ifExpression
+	lazy val expression: PackratParser[Expression] = variable | literal | ifExpression | explicitParens
+	lazy val explicitParens = "(" ~> expression <~ ")" ^^ { case e => e }
 	lazy val literal: PackratParser[Literal] = boolLiteral | intLiteral | stringLiteral
 	lazy val variable: PackratParser[Variable] = ident ^^ Variable
 	lazy val boolLiteral: PackratParser[BoolLiteral] = ("true" | "false") ^^ (str => BoolLiteral(java.lang.Boolean.parseBoolean(str)))

@@ -37,6 +37,11 @@ public class ParserPrinterTest {
 				"if false then \"\" else \"hi\" fi");
 	}
 
+	@Test
+	public void parseExplicitParens() throws Exception {
+		assertParsed("(123)", "123");
+	}
+
 	private void assertParsed(String input, String expected) {
 		AbstractSyntaxTree ast = parser.parse(input);
 		String string = printer.print(ast);
