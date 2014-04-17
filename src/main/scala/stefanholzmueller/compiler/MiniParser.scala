@@ -22,22 +22,23 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 		}
 	}
 
-	lazy val ast: PackratParser[AST] = functionDefinition | expression
-	lazy val expression: PackratParser[Expression] = explicitParens | functionApplication | variable | literal | ifExpression
-	lazy val explicitParens = "(" ~> expression <~ ")" ^^ { case e => e }
-	lazy val literal: PackratParser[Literal] = boolLiteral | intLiteral | stringLiteral
-	lazy val variable: PackratParser[Variable] = ident ^^ Variable
-	lazy val boolLiteral: PackratParser[BoolLiteral] = ("true" | "false") ^^ (str => BoolLiteral(java.lang.Boolean.parseBoolean(str)))
-	lazy val intLiteral: PackratParser[IntLiteral] = numericLit ^^ (str => IntLiteral(java.lang.Integer.parseInt(str)))
-	lazy val stringLiteral: PackratParser[StringLiteral] = stringLit ^^ (str => StringLiteral(str)) // TODO escaping broken
-	lazy val ifExpression: PackratParser[IfExpression] = "if" ~ expression ~ "then" ~ expression ~ "else" ~ expression ~ "fi" ^^ { case "if" ~ condExpr ~ "then" ~ thenExpr ~ "else" ~ elseExpr ~ "fi" => IfExpression(condExpr, thenExpr, elseExpr) }
+	type P[+T] = PackratParser[T]
+	lazy val ast: P[AST] = functionDefinition | expression
+	lazy val expression: P[Expression] = explicitParens | functionApplication | variable | literal | ifExpression
+	lazy val explicitParens = "(" ~> expression <~ ")"
+	lazy val literal: P[Literal] = boolLiteral | intLiteral | stringLiteral
+	lazy val variable: P[Variable] = ident ^^ Variable
+	lazy val boolLiteral: P[BoolLiteral] = ("true" | "false") ^^ (str => BoolLiteral(java.lang.Boolean.parseBoolean(str)))
+	lazy val intLiteral: P[IntLiteral] = numericLit ^^ (str => IntLiteral(java.lang.Integer.parseInt(str)))
+	lazy val stringLiteral: P[StringLiteral] = stringLit ^^ (str => StringLiteral(str)) // TODO escaping broken
+	lazy val ifExpression: P[IfExpression] = "if" ~ expression ~ "then" ~ expression ~ "else" ~ expression ~ "fi" ^^ { case "if" ~ condExpr ~ "then" ~ thenExpr ~ "else" ~ elseExpr ~ "fi" => IfExpression(condExpr, thenExpr, elseExpr) }
 
-	lazy val functionDefinition: PackratParser[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
-	lazy val parameterList: PackratParser[List[Parameter]] = opt("(" ~> repsep(parameter, ",") <~ ")") ^^ (option => option.getOrElse(List()))
-	lazy val parameter: PackratParser[Parameter] = nameIdentifier ~ ":" ~ typeIdentifier ^^ { case nameIdentifier ~ ":" ~ typeIdentifier => Parameter(nameIdentifier, typeIdentifier) }
-	lazy val nameIdentifier: PackratParser[Identifier] = ident ^^ Identifier
-	lazy val typeIdentifier: PackratParser[Identifier] = ident ^^ Identifier
+	lazy val functionDefinition: P[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
+	lazy val parameterList: P[List[Parameter]] = opt("(" ~> repsep(parameter, ",") <~ ")") ^^ (option => option.getOrElse(List()))
+	lazy val parameter: P[Parameter] = nameIdentifier ~ ":" ~ typeIdentifier ^^ { case nameIdentifier ~ ":" ~ typeIdentifier => Parameter(nameIdentifier, typeIdentifier) }
+	lazy val nameIdentifier: P[Identifier] = ident ^^ Identifier
+	lazy val typeIdentifier: P[Identifier] = ident ^^ Identifier
 
-	lazy val functionApplication: PackratParser[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
+	lazy val functionApplication: P[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
 
 }
