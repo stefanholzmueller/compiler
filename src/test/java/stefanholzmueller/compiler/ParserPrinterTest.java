@@ -42,6 +42,13 @@ public class ParserPrinterTest {
 		assertParsed("(123)", "123");
 	}
 
+	@Test
+	public void parseFunctionDefinition() throws Exception {
+		assertParsed("answer:Int=42", "answer(): Int = 42");
+		assertParsed("id(n: Int): Int = n", "id(n: Int): Int = n");
+		assertParsed("f (n:Int, b:Bool):Int=n", "f(n: Int, b: Bool): Int = n");
+	}
+
 	private void assertParsed(String input, String expected) {
 		AbstractSyntaxTree ast = parser.parse(input);
 		String string = printer.print(ast);

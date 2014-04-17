@@ -10,3 +10,7 @@ case class IntLiteral(value: Int) extends Literal
 case class StringLiteral(value: String) extends Literal
 case class Variable(name: String) extends Expression
 case class IfExpression(condExpr: Expression, thenExpr: Expression, elseExpr: Expression) extends Expression
+
+case class FunctionDefinition(name: Identifier, returnType: Identifier, parameters: List[Parameter], body: Expression) extends AST
+case class Parameter(nameIdentifier: Identifier, typeIdentifier: Identifier) extends AST
+case class Identifier(name: String) extends AST
