@@ -32,9 +32,10 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val stringLiteral: PackratParser[StringLiteral] = stringLit ^^ (str => StringLiteral(str))
 	lazy val ifExpression: PackratParser[IfExpression] = "if" ~ expression ~ "then" ~ expression ~ "else" ~ expression ~ "fi" ^^ { case "if" ~ condExpr ~ "then" ~ thenExpr ~ "else" ~ elseExpr ~ "fi" => IfExpression(condExpr, thenExpr, elseExpr) }
 
-	lazy val functionDefinition: PackratParser[FunctionDefinition] = identifier ~ parameterList ~ ":" ~ identifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
+	lazy val functionDefinition: PackratParser[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
 	lazy val parameterList: PackratParser[List[Parameter]] = opt("(" ~> repsep(parameter, ",") <~ ")") ^^ (option => option.getOrElse(List()))
-	lazy val parameter: PackratParser[Parameter] = identifier ~ ":" ~ identifier ^^ { case nameIdentifier ~ ":" ~ typeIdentifier => Parameter(nameIdentifier, typeIdentifier) }
-	lazy val identifier: PackratParser[Identifier] = ident ^^ Identifier
+	lazy val parameter: PackratParser[Parameter] = nameIdentifier ~ ":" ~ typeIdentifier ^^ { case nameIdentifier ~ ":" ~ typeIdentifier => Parameter(nameIdentifier, typeIdentifier) }
+	lazy val nameIdentifier: PackratParser[Identifier] = ident ^^ Identifier
+	lazy val typeIdentifier: PackratParser[Identifier] = ident ^^ Identifier
 
 }
