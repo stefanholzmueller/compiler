@@ -23,13 +23,13 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	}
 
 	lazy val ast: PackratParser[AST] = functionDefinition | expression
-	lazy val expression: PackratParser[Expression] = variable | literal | ifExpression | explicitParens
+	lazy val expression: PackratParser[Expression] = explicitParens | functionApplication | variable | literal | ifExpression
 	lazy val explicitParens = "(" ~> expression <~ ")" ^^ { case e => e }
 	lazy val literal: PackratParser[Literal] = boolLiteral | intLiteral | stringLiteral
 	lazy val variable: PackratParser[Variable] = ident ^^ Variable
 	lazy val boolLiteral: PackratParser[BoolLiteral] = ("true" | "false") ^^ (str => BoolLiteral(java.lang.Boolean.parseBoolean(str)))
 	lazy val intLiteral: PackratParser[IntLiteral] = numericLit ^^ (str => IntLiteral(java.lang.Integer.parseInt(str)))
-	lazy val stringLiteral: PackratParser[StringLiteral] = stringLit ^^ (str => StringLiteral(str))
+	lazy val stringLiteral: PackratParser[StringLiteral] = stringLit ^^ (str => StringLiteral(str)) // TODO escaping broken
 	lazy val ifExpression: PackratParser[IfExpression] = "if" ~ expression ~ "then" ~ expression ~ "else" ~ expression ~ "fi" ^^ { case "if" ~ condExpr ~ "then" ~ thenExpr ~ "else" ~ elseExpr ~ "fi" => IfExpression(condExpr, thenExpr, elseExpr) }
 
 	lazy val functionDefinition: PackratParser[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
@@ -37,5 +37,7 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val parameter: PackratParser[Parameter] = nameIdentifier ~ ":" ~ typeIdentifier ^^ { case nameIdentifier ~ ":" ~ typeIdentifier => Parameter(nameIdentifier, typeIdentifier) }
 	lazy val nameIdentifier: PackratParser[Identifier] = ident ^^ Identifier
 	lazy val typeIdentifier: PackratParser[Identifier] = ident ^^ Identifier
+
+	lazy val functionApplication: PackratParser[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
 
 }

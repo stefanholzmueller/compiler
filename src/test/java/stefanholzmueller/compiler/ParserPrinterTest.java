@@ -9,11 +9,6 @@ public class ParserPrinterTest {
 	private Printer printer = new MiniPrinter();
 
 	@Test
-	public void parseVariable() throws Exception {
-		assertParsed("asd", "asd");
-	}
-
-	@Test
 	public void parseIntegerLiteral() throws Exception {
 		assertParsedLiteral("123");
 	}
@@ -47,6 +42,8 @@ public class ParserPrinterTest {
 		assertParsed("answer:Int=42", "answer(): Int = 42");
 		assertParsed("id(n: Int): Int = n", "id(n: Int): Int = n");
 		assertParsed("f (n:Int, b:Bool):Int=n", "f(n: Int, b: Bool): Int = n");
+		assertParsed("succ(n: Int): Int = addInt n 1",
+				"succ(n: Int): Int = addInt n 1");
 	}
 
 	private void assertParsed(String input, String expected) {

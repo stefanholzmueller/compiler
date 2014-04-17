@@ -14,3 +14,5 @@ case class IfExpression(condExpr: Expression, thenExpr: Expression, elseExpr: Ex
 case class FunctionDefinition(name: Identifier, returnType: Identifier, parameters: List[Parameter], body: Expression) extends AST
 case class Parameter(nameIdentifier: Identifier, typeIdentifier: Identifier) extends AST
 case class Identifier(name: String) extends AST
+
+case class FunctionApplication(name: Identifier, arguments: List[Expression]) extends Expression
