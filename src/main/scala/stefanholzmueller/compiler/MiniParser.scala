@@ -40,5 +40,6 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val typeIdentifier: P[Identifier] = ident ^^ Identifier
 
 	lazy val functionApplication: P[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
+	lazy val program: P[AST] = ???
 
 }

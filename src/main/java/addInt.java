@@ -7,4 +7,7 @@ public class addInt implements IntBinaryOperator {
 		return left + right;
 	}
 
+	public int apply(int left, int right) {
+		return left + right;
+	}
 }
