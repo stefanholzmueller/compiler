@@ -24,10 +24,9 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 
 	type P[+T] = PackratParser[T]
 	lazy val ast: P[AST] = functionDefinition | expression
-	lazy val expression: P[Expression] = explicitParens | functionApplication | variable | literal | ifExpression
+	lazy val expression: P[Expression] = explicitParens | functionApplication | literal | ifExpression
 	lazy val explicitParens = "(" ~> expression <~ ")"
 	lazy val literal: P[Literal] = boolLiteral | intLiteral | stringLiteral
-	lazy val variable: P[Variable] = ident ^^ Variable
 	lazy val boolLiteral: P[BoolLiteral] = ("true" | "false") ^^ (str => BoolLiteral(java.lang.Boolean.parseBoolean(str)))
 	lazy val intLiteral: P[IntLiteral] = numericLit ^^ (str => IntLiteral(java.lang.Integer.parseInt(str)))
 	lazy val stringLiteral: P[StringLiteral] = stringLit ^^ (str => StringLiteral(str)) // TODO escaping broken
@@ -40,6 +39,6 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val typeIdentifier: P[Identifier] = ident ^^ Identifier
 
 	lazy val functionApplication: P[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
-	lazy val program: P[AST] = ???
+	lazy val program: P[Program] = rep(functionDefinition) ~ expression ^^ { case functionDefinitions ~ expression => Program(expression, functionDefinitions) }
 
 }
