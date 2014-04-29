@@ -12,18 +12,17 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 
 	def parseResult(source: String): ParseResult[AST] = {
 		val tokens = new lexical.Scanner(source)
-		phrase(ast)(tokens)
+		phrase(program)(tokens)
 	}
 
 	def parse(source: String): AST = {
 		parseResult(source) match {
-			case Success(expr, _) => expr
+			case Success(program, _) => program
 			case err: NoSuccess => throw new RuntimeException(err.toString())
 		}
 	}
 
 	type P[+T] = PackratParser[T]
-	lazy val ast: P[AST] = functionDefinition | expression
 	lazy val expression: P[Expression] = explicitParens | functionApplication | literal | ifExpression
 	lazy val explicitParens = "(" ~> expression <~ ")"
 	lazy val literal: P[Literal] = boolLiteral | intLiteral | stringLiteral
@@ -33,12 +32,12 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val ifExpression: P[IfExpression] = "if" ~ expression ~ "then" ~ expression ~ "else" ~ expression ~ "fi" ^^ { case "if" ~ condExpr ~ "then" ~ thenExpr ~ "else" ~ elseExpr ~ "fi" => IfExpression(condExpr, thenExpr, elseExpr) }
 
 	lazy val functionDefinition: P[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
-	lazy val parameterList: P[List[Parameter]] = opt("(" ~> repsep(parameter, ",") <~ ")") ^^ (option => option.getOrElse(List()))
+	lazy val parameterList: P[List[Parameter]] = "(" ~> repsep(parameter, ",") <~ ")"
 	lazy val parameter: P[Parameter] = nameIdentifier ~ ":" ~ typeIdentifier ^^ { case nameIdentifier ~ ":" ~ typeIdentifier => Parameter(nameIdentifier, typeIdentifier) }
 	lazy val nameIdentifier: P[Identifier] = ident ^^ Identifier
 	lazy val typeIdentifier: P[Identifier] = ident ^^ Identifier
 
 	lazy val functionApplication: P[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
-	lazy val program: P[Program] = rep(functionDefinition) ~ expression ^^ { case functionDefinitions ~ expression => Program(expression, functionDefinitions) }
+	lazy val program: P[Program] = rep(functionDefinition) ~ opt(expression) ^^ { case functionDefinitions ~ expression => Program(functionDefinitions, expression) }
 
 }

@@ -10,18 +10,18 @@ public class ParserPrinterTest {
 
 	@Test
 	public void parseIntegerLiteral() throws Exception {
-		assertParsedLiteral("123");
+		assertParsed("123");
 	}
 
 	@Test
 	public void parseBooleanLiteral() throws Exception {
-		assertParsedLiteral("true");
-		assertParsedLiteral("false");
+		assertParsed("true");
+		assertParsed("false");
 	}
 
 	@Test
 	public void parseStringLiteral() throws Exception {
-		assertParsedLiteral("\"hi\"");
+		assertParsed("\"hi\"");
 		// assertParsedLiteral("\"back\\\"slash\"");
 	}
 
@@ -39,11 +39,16 @@ public class ParserPrinterTest {
 
 	@Test
 	public void parseFunctionDefinition() throws Exception {
-		assertParsed("answer:Int=42", "answer(): Int = 42");
+		assertParsed("answer():Int=42", "answer(): Int = 42");
 		assertParsed("id(n: Int): Int = n", "id(n: Int): Int = n");
 		assertParsed("f (n:Int, b:Bool):Int=n", "f(n: Int, b: Bool): Int = n");
 		assertParsed("succ(n: Int): Int = addInt n 1",
 				"succ(n: Int): Int = addInt n 1");
+	}
+
+	@Test
+	public void parseProgram() throws Exception {
+		assertParsed("answer(): Int = 42\n\nanswer");
 	}
 
 	private void assertParsed(String input, String expected) {
@@ -52,7 +57,7 @@ public class ParserPrinterTest {
 		Assert.assertEquals(expected, string);
 	}
 
-	private void assertParsedLiteral(String literal) {
+	private void assertParsed(String literal) {
 		AbstractSyntaxTree ast = parser.parse(literal);
 		String string = printer.print(ast);
 		Assert.assertEquals(literal, string);

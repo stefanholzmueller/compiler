@@ -5,6 +5,7 @@ import scala.util.parsing.input.Positional
 sealed trait AST extends AbstractSyntaxTree with Positional
 trait Expression extends AST
 trait Literal extends Expression
+
 case class BoolLiteral(value: Boolean) extends Literal
 case class IntLiteral(value: Int) extends Literal
 case class StringLiteral(value: String) extends Literal
@@ -16,4 +17,4 @@ case class Identifier(name: String) extends AST
 
 case class FunctionApplication(name: Identifier, arguments: List[Expression]) extends Expression
 
-case class Program(main: Expression, functionDefinitions: List[FunctionDefinition])
+case class Program(functionDefinitions: List[FunctionDefinition], main: Option[Expression]) extends AST
