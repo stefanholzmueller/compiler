@@ -11,4 +11,9 @@ public class lessThan implements Function2<BigDecimal, BigDecimal, Boolean> {
 		return a.compareTo(b) < 0;
 	}
 
+	@Override
+	public Object apply(Object... args) {
+		return apply((BigDecimal) args[0], (BigDecimal) args[1]);
+	}
+
 }

@@ -10,4 +10,9 @@ public class println implements Function1<Object, Void> {
 		return null;
 	}
 
+	@Override
+	public Object apply(Object... args) {
+		return apply(args[0]);
+	}
+
 }

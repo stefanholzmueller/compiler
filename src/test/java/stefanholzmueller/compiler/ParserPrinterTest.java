@@ -51,15 +51,20 @@ public class ParserPrinterTest {
 		assertParsed("answer(): Int = 42\n\nanswer");
 	}
 
+	@Test
+	public void testIdentityOfOne() throws Exception {
+		assertParsed("id(x: Int): Int = x;\n\nid 1");
+	}
+
 	private void assertParsed(String input, String expected) {
 		AbstractSyntaxTree ast = parser.parse(input);
 		String string = printer.print(ast);
 		Assert.assertEquals(expected, string);
 	}
 
-	private void assertParsed(String literal) {
-		AbstractSyntaxTree ast = parser.parse(literal);
+	private void assertParsed(String input) {
+		AbstractSyntaxTree ast = parser.parse(input);
 		String string = printer.print(ast);
-		Assert.assertEquals(literal, string);
+		Assert.assertEquals(input, string);
 	}
 }

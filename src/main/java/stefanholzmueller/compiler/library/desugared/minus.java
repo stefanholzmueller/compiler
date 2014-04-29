@@ -11,4 +11,9 @@ public class minus implements Function2<BigDecimal, BigDecimal, BigDecimal> {
 		return a.subtract(b);
 	}
 
+	@Override
+	public Object apply(Object... args) {
+		return apply((BigDecimal) args[0], (BigDecimal) args[1]);
+	}
+
 }
