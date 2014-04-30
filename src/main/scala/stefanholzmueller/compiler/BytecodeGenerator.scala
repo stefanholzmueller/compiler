@@ -20,8 +20,8 @@ class BytecodeGenerator extends Generator {
 		val classNode = new ClassNode(ASM5);
 		classNode.version = V1_7;
 		classNode.access = ACC_PUBLIC;
-		classNode.signature = "LHelloWorld;";
-		classNode.name = "HelloWorld";
+		classNode.signature = "LMain;";
+		classNode.name = "Main";
 		classNode.superName = "java/lang/Object";
 
 		val mainMethod: MethodNode = new MethodNode(ASM5, ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
@@ -37,7 +37,7 @@ class BytecodeGenerator extends Generator {
 		val cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		classNode.accept(cw);
 		val bytes = cw.toByteArray();
-		new ClassFile("HelloWorld", bytes)
+		new ClassFile("Main", bytes)
 	}
 
 	def generateInstructions(expression: AbstractSyntaxTree): java.util.List[AbstractInsnNode] = {

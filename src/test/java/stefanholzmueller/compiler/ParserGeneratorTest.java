@@ -13,7 +13,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
 
 import stefanholzmueller.compiler.Generator.CompilationUnit;
 
-public class GeneratorTest {
+public class ParserGeneratorTest {
 
 	private Parser parser = new MiniParser();
 	private Generator generator = new BytecodeGenerator();
@@ -24,11 +24,28 @@ public class GeneratorTest {
 		AbstractSyntaxTree ast = parser.parse(source);
 		CompilationUnit compilationUnit = generator.generateMain(ast);
 
-		assertEquals("HelloWorld", compilationUnit.getName());
+		assertEquals("Main", compilationUnit.getName());
 
-		String decompiled = textifyBytecode(compilationUnit.getBytes());
+		String text = textifyBytecode(compilationUnit.getBytes());
 
-		assertEquals("", decompiled);
+		StringBuilder expected = new StringBuilder();
+		expected.append("// class version 51.0 (51)\n");
+		expected.append("// access flags 0x1\n");
+		expected.append("// signature LMain;\n");
+		expected.append("// declaration: Main extends Main\n");
+		expected.append("public class Main {\n");
+		expected.append("\n");
+		expected.append("\n");
+		expected.append("  // access flags 0x9\n");
+		expected.append("  public static main([Ljava/lang/String;)V\n");
+		expected.append("    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;\n");
+		expected.append("    LDC \"Hello, World!\"\n");
+		expected.append("    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V\n");
+		expected.append("    RETURN\n");
+		expected.append("    MAXSTACK = 2\n");
+		expected.append("    MAXLOCALS = 1\n");
+		expected.append("}\n");
+		assertEquals(expected.toString(), text);
 	}
 
 	private String textifyBytecode(byte[] bytes) throws IOException {
