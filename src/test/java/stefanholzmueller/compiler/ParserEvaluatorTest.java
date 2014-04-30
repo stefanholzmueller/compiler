@@ -3,6 +3,7 @@ package stefanholzmueller.compiler;
 import java.math.BigDecimal;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ParserEvaluatorTest {
@@ -18,6 +19,11 @@ public class ParserEvaluatorTest {
 	@Test
 	public void evaluateFunctionApplication() throws Exception {
 		assertEvaluated("answer(): Int = 42\nanswer", new BigDecimal(42));
+	}
+
+	@Ignore
+	@Test
+	public void evaluateFunctionApplicationWithVariable() throws Exception {
 		assertEvaluated("id(x: Int): Int = x\nid 1", new BigDecimal(1));
 	}
 

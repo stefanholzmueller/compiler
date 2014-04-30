@@ -5,9 +5,8 @@ import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 
+import stefanholzmueller.compiler.Generator.ClassFile;
 import stefanholzmueller.compiler.Generator.CompilationUnit;
-import stefanholzmueller.compiler.asm.AsmBytecodeGenerator;
-import stefanholzmueller.compiler.asm.ClassFile;
 
 public class BytecodeEmitter implements Emitter {
 
@@ -19,13 +18,13 @@ public class BytecodeEmitter implements Emitter {
 		try {
 			IOUtils.write(bytecode, new FileOutputStream(fileName));
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
 	public static void main(String[] args) {
-		ClassFile generateFunctionClass = new AsmBytecodeGenerator()
-				.generateFunctionClass();
-		new BytecodeEmitter().emit(generateFunctionClass);
+		AST ast = new MiniParser().parse("minus 321 123");
+		ClassFile main = new BytecodeGenerator().generateMain(ast);
+		new BytecodeEmitter().emit(main);
 	}
 }
