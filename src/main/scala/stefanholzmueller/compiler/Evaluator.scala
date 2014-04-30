@@ -4,13 +4,6 @@ import java.math.BigDecimal
 import stefanholzmueller.compiler.library.function.Function
 
 class Evaluator {
-	def evalLibrary(fa: FunctionApplication): Any = fa match {
-		case FunctionApplication(Identifier(name), args) => {
-			val clazz: Class[Function] = Class.forName(name).asInstanceOf[Class[Function]]
-			val instance: Function = clazz.newInstance()
-			instance.apply()
-		}
-	}
 
 	def eval(program: AbstractSyntaxTree): Any = program match {
 		case Program(fns, main) => {
@@ -31,20 +24,27 @@ class Evaluator {
 		}
 	}
 
+	def evalWithEnv(expression: Expression, env: Map[String, AST]): Any = expression match {
+		case IntLiteral(v) => new BigDecimal(v)
+		case FunctionApplication(Identifier(name), args) => {
+			val optAst = env.get(name)
+			if (optAst.isEmpty) {
+				evalLibrary("stefanholzmueller.compiler.library.desugared." + name, args.map(evalWithEnv(_, env)))
+			} else {
+				optAst.get match {
+					case FunctionDefinition(n, r, ps, body) => evalWithEnv(body, env)
+					//					case FunctionApplication(n, args) =>
+					case e: Expression => evalWithEnv(e, env)
+					case _ => throw new RuntimeException
+				}
+			}
+		}
+	}
+
 	def evalLibrary(className: String, args: List[Any]) = {
 		val clazz: Class[Function] = Class.forName(className).asInstanceOf[Class[Function]]
 		val instance: Function = clazz.newInstance()
 		val a: Array[Object] = args.toArray.asInstanceOf[Array[Object]]
 		instance.apply(a: _*)
-	}
-}
-
-object Evaluator {
-	def main(args: Array[String]) {
-		val evaluator = new Evaluator();
-		val evaluated = evaluator.eval(FunctionApplication(Identifier("hello"), List()))
-		println(evaluated)
-
-		println(new BigDecimal(2).divide(new BigDecimal(3), 100, BigDecimal.ROUND_HALF_EVEN))
 	}
 }
