@@ -10,7 +10,7 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	class MiniLexical extends StdLexical {
 		import scala.util.parsing.input.CharArrayReader.EofCh
 
-		delimiters ++= Seq("(", ")", "=", ":", ",", "\n")
+		delimiters ++= Seq("(", ")", "=", ":", ",", "\n", "`")
 		reserved ++= Seq("true", "false", "if", "then", "else", "fi", "\n")
 
 		override def whitespaceChar = elem("space char", ch => ch <= ' ' && ch != EofCh && ch != '\n')
@@ -46,7 +46,9 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val nameIdentifier: P[Identifier] = ident ^^ Identifier // TODO extra case classes
 	lazy val typeIdentifier: P[Identifier] = ident ^^ Identifier
 
-	lazy val functionApplication: P[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
+	lazy val functionApplication: P[FunctionApplication] = infixFunctionApplication | canonicalFunctionApplication
+	lazy val canonicalFunctionApplication: P[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
+	lazy val infixFunctionApplication: P[FunctionApplication] = expression ~ "`" ~ nameIdentifier ~ "`" ~ rep(expression) ^^ { case expression ~ "`" ~ nameIdentifier ~ "`" ~ rest => FunctionApplication(nameIdentifier, expression :: rest) }
 	lazy val program: P[Program] = rep(functionDefinition) ~ opt(expression) ^^ { case functionDefinitions ~ expression => Program(functionDefinitions, expression) }
 
 }
