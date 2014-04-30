@@ -53,7 +53,7 @@ public class ParserPrinterTest {
 
 	@Test
 	public void testIdentityOfOne() throws Exception {
-		assertParsed("id(x: Int): Int = x;\n\nid 1");
+		assertParsed("id(x: Int): Int = x\n\nid 1");
 	}
 
 	private void assertParsed(String input, String expected) {

@@ -6,9 +6,17 @@ import scala.util.parsing.combinator.PackratParsers
 
 class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	type Tokens = StdLexical
-	val lexical = new StdLexical
-	lexical.delimiters ++= Seq("(", ")", "=", ":", ",", ";")
-	lexical.reserved ++= Seq("true", "false", "if", "then", "else", "fi", "\n")
+
+	class MiniLexical extends StdLexical {
+		import scala.util.parsing.input.CharArrayReader.EofCh
+
+		delimiters ++= Seq("(", ")", "=", ":", ",", "\n")
+		reserved ++= Seq("true", "false", "if", "then", "else", "fi", "\n")
+
+		override def whitespaceChar = elem("space char", ch => ch <= ' ' && ch != EofCh && ch != '\n')
+	}
+
+	val lexical = new MiniLexical
 
 	def parseResult(source: String): ParseResult[AST] = {
 		val tokens = new lexical.Scanner(source)
@@ -32,7 +40,7 @@ class MiniParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val stringLiteral: P[StringLiteral] = stringLit ^^ (str => StringLiteral(str)) // TODO escaping broken, see JavaTokenParsers?
 	lazy val ifExpression: P[IfExpression] = "if" ~ expression ~ "then" ~ expression ~ "else" ~ expression ~ "fi" ^^ { case "if" ~ condExpr ~ "then" ~ thenExpr ~ "else" ~ elseExpr ~ "fi" => IfExpression(condExpr, thenExpr, elseExpr) }
 
-	lazy val functionDefinition: P[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ~ ";" ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body ~ ";" => FunctionDefinition(name, returnType, parameterList, body) }
+	lazy val functionDefinition: P[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
 	lazy val parameterList: P[List[Parameter]] = "(" ~> repsep(parameter, ",") <~ ")"
 	lazy val parameter: P[Parameter] = nameIdentifier ~ ":" ~ typeIdentifier ^^ { case nameIdentifier ~ ":" ~ typeIdentifier => Parameter(nameIdentifier, typeIdentifier) }
 	lazy val nameIdentifier: P[Identifier] = ident ^^ Identifier // TODO extra case classes
