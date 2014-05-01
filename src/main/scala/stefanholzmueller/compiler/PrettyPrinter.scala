@@ -1,6 +1,6 @@
 package stefanholzmueller.compiler
 
-class MiniPrinter extends Printer {
+class PrettyPrinter extends Printer {
 	def print(ast: AbstractSyntaxTree): String = {
 		ast match {
 			case Program(fns, main) => printList(fns, "\n\n") + (if (!fns.isEmpty && !main.isEmpty) "\n\n" else "") + main.map(print(_)).getOrElse("")

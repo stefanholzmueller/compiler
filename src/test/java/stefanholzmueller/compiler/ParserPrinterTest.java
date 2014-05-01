@@ -5,8 +5,8 @@ import org.junit.Test;
 
 public class ParserPrinterTest {
 
-	private Parser parser = new MiniParser();
-	private Printer printer = new MiniPrinter();
+	private Parser parser = new SourceParser();
+	private Printer printer = new PrettyPrinter();
 
 	@Test
 	public void parseIntegerLiteral() throws Exception {
@@ -28,8 +28,7 @@ public class ParserPrinterTest {
 	@Test
 	public void parseIfExpression() throws Exception {
 		assertParsed("if true then 1 else 0 fi", "if true then 1 else 0 fi");
-		assertParsed("if false\n  then \"\"\n  else \"hi\"\nfi",
-				"if false then \"\" else \"hi\" fi");
+		assertParsed("if false\n  then \"\"\n  else \"hi\"\nfi", "if false then \"\" else \"hi\" fi");
 	}
 
 	@Test
@@ -42,8 +41,7 @@ public class ParserPrinterTest {
 		assertParsed("answer():Int=42", "answer(): Int = 42");
 		assertParsed("id(n: Int): Int = n", "id(n: Int): Int = n");
 		assertParsed("f (n:Int, b:Bool):Int=n", "f(n: Int, b: Bool): Int = n");
-		assertParsed("succ(n: Int): Int = addInt n 1",
-				"succ(n: Int): Int = addInt n 1");
+		assertParsed("succ(n: Int): Int = addInt n 1", "succ(n: Int): Int = addInt n 1");
 	}
 
 	@Test

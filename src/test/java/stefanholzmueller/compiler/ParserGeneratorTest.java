@@ -15,7 +15,7 @@ import stefanholzmueller.compiler.Generator.CompilationUnit;
 
 public class ParserGeneratorTest {
 
-	private Parser parser = new MiniParser();
+	private Parser parser = new SourceParser();
 	private Generator generator = new BytecodeGenerator();
 
 	@Test

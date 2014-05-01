@@ -1,7 +1,7 @@
 package stefanholzmueller.compiler
 
 object REPL {
-	val parser = new MiniParser
+	val parser = new SourceParser
 	def main(args: Array[String]) = {
 		while (true) {
 			val exprSrc = readLine("repl> ")

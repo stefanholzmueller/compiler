@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class ParserEvaluatorTest {
 
-	private Parser parser = new MiniParser();
+	private Parser parser = new SourceParser();
 	private Evaluator evaluator = new Evaluator();
 
 	@Test

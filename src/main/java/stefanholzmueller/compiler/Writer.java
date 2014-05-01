@@ -2,8 +2,8 @@ package stefanholzmueller.compiler;
 
 import stefanholzmueller.compiler.Generator.CompilationUnit;
 
-public interface Emitter {
+public interface Writer {
 
-	void emit(CompilationUnit compilationUnit);
+	void write(CompilationUnit compilationUnit, String basePath);
 
 }
