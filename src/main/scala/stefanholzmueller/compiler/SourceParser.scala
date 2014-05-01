@@ -48,7 +48,7 @@ class SourceParser extends Parser with StdTokenParsers with PackratParsers {
 
 	lazy val functionApplication: P[FunctionApplication] = infixFunctionApplication | canonicalFunctionApplication
 	lazy val canonicalFunctionApplication: P[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }
-	lazy val infixFunctionApplication: P[FunctionApplication] = (expression ~ "`" ~ nameIdentifier ~ "`" ~ rep(expression) ^^ { case expression ~ "`" ~ nameIdentifier ~ "`" ~ rest => FunctionApplication(nameIdentifier, expression :: expression :: rest) })
+	lazy val infixFunctionApplication: P[FunctionApplication] = (expression ~ "`" ~ nameIdentifier ~ "`" ~ rep1(expression) ^^ { case expression ~ "`" ~ nameIdentifier ~ "`" ~ rest => FunctionApplication(nameIdentifier, expression :: rest) })
 	lazy val program: P[Program] = rep(functionDefinition) ~ opt(expression) ^^ { case functionDefinitions ~ expression => Program(functionDefinitions, expression) }
 
 }

@@ -26,19 +26,18 @@ public class ParserWriterTest {
 	}
 
 	@Test
-	public void evaluateMinusMinus() throws Exception {
-		String source = "7 `minus` 5 `minus` 3";
-		String expected = "5\n";
+	public void evaluateMinus() throws Exception {
+		assertProgramOutput("321 `minus` 123", "198\n");
+	}
 
-		assertProgramOutput(source, expected);
+	@Test
+	public void evaluateMinusMinus() throws Exception {
+		assertProgramOutput("7 `minus` 5 `minus` 3", "5\n");
 	}
 
 	@Test
 	public void evaluateMiusMinusWithExplicitParens() throws Exception {
-		String source = "(7 `minus` 5) `minus` 3";
-		String expected = "-1\n";
-
-		assertProgramOutput(source, expected);
+		assertProgramOutput("(7 `minus` 5) `minus` 3", "-1\n");
 	}
 
 	private void assertProgramOutput(String source, String expected) throws IOException, InterruptedException {
