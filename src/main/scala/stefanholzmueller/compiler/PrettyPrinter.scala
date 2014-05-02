@@ -10,7 +10,8 @@ class PrettyPrinter extends Printer {
 			case IfExpression(c, t, e) => "if " + print(c) + " then " + print(t) + " else " + print(e) + " fi"
 			case FunctionDefinition(n, r, params, b) => print(n) + "(" + printList(params, ", ") + "): " + print(r) + " = " + print(b)
 			case Parameter(n, t) => print(n) + ": " + print(t)
-			case Identifier(n) => n
+			case NameIdentifier(n) => n
+			case TypeIdentifier(n) => n
 			case FunctionApplication(n, args) => print(n) + (if (args.isEmpty) "" else " ") + printList(args, " ")
 			case x: AST => x.toString()
 		}

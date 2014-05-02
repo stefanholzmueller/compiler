@@ -13,10 +13,10 @@ class Evaluator {
 
 	def evalWithEnv(expression: Expression, env: List[FunctionDefinition]): Any = expression match {
 		case IntLiteral(v) => new BigDecimal(v)
-		case FunctionApplication(name, args) => {
-			val optFn = env.find(_.name == name)
+		case FunctionApplication(NameIdentifier(name), args) => {
+			val optFn = env.find(_ == name)
 			if (optFn.isEmpty) {
-				evalLibrary("stefanholzmueller.compiler.library.desugared." + name.name, args.map(evalWithEnv(_, env)))
+				evalLibrary("stefanholzmueller.compiler.library.desugared." + name, args.map(evalWithEnv(_, env)))
 			} else {
 				val fn = optFn.get
 				evalWithEnv(fn.body, env)
@@ -26,7 +26,7 @@ class Evaluator {
 
 	def evalWithEnv(expression: Expression, env: Map[String, AST]): Any = expression match {
 		case IntLiteral(v) => new BigDecimal(v)
-		case FunctionApplication(Identifier(name), args) => {
+		case FunctionApplication(NameIdentifier(name), args) => {
 			val optAst = env.get(name)
 			if (optAst.isEmpty) {
 				evalLibrary("stefanholzmueller.compiler.library.desugared." + name, args.map(evalWithEnv(_, env)))

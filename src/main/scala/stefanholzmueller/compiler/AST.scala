@@ -17,5 +17,14 @@ case class NameIdentifier(name: String) extends AST
 case class TypeIdentifier(name: String) extends AST
 
 case class FunctionApplication(nameIdentifier: NameIdentifier, arguments: List[Expression]) extends Expression
+case class LibraryFunctionApplication(nameIdentifier: NameIdentifier, arguments: List[Expression]) extends SemanticFunctionApplication
+case class UserFunctionApplication(nameIdentifier: NameIdentifier, arguments: List[Expression]) extends SemanticFunctionApplication
 
 case class Program(functionDefinitions: List[FunctionDefinition], main: Option[Expression]) extends AST
+
+// IR
+trait IntermediateRepresentation extends Expression {
+	//	def returnType: TypeIdentifier
+}
+trait SemanticFunctionApplication extends IntermediateRepresentation
+case class Variable(nameIdentifier: NameIdentifier) extends IntermediateRepresentation

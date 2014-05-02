@@ -43,8 +43,8 @@ class SourceParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val functionDefinition: P[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
 	lazy val parameterList: P[List[Parameter]] = "(" ~> repsep(parameter, ",") <~ ")"
 	lazy val parameter: P[Parameter] = nameIdentifier ~ ":" ~ typeIdentifier ^^ { case nameIdentifier ~ ":" ~ typeIdentifier => Parameter(nameIdentifier, typeIdentifier) }
-	lazy val nameIdentifier: P[Identifier] = ident ^^ Identifier // TODO extra case classes
-	lazy val typeIdentifier: P[Identifier] = ident ^^ Identifier
+	lazy val nameIdentifier: P[NameIdentifier] = ident ^^ NameIdentifier
+	lazy val typeIdentifier: P[TypeIdentifier] = ident ^^ TypeIdentifier
 
 	lazy val functionApplication: P[FunctionApplication] = infixFunctionApplication | canonicalFunctionApplication
 	lazy val canonicalFunctionApplication: P[FunctionApplication] = nameIdentifier ~ rep(expression) ^^ { case nameIdentifier ~ arguments => FunctionApplication(nameIdentifier, arguments) }

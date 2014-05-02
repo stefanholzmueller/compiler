@@ -16,6 +16,7 @@ public class ParserEvaluatorTest {
 		assertEvaluated("42", new BigDecimal(42));
 	}
 
+	@Ignore
 	@Test
 	public void evaluateFunctionApplication() throws Exception {
 		assertEvaluated("answer(): Int = 42\nanswer", new BigDecimal(42));
