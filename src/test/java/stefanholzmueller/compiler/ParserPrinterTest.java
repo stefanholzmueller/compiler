@@ -1,6 +1,7 @@
 package stefanholzmueller.compiler;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ParserPrinterTest {
@@ -54,6 +55,7 @@ public class ParserPrinterTest {
 		assertParsed("1 `plus` 2", "plus 1 2");
 	}
 
+	@Ignore
 	@Test
 	public void testIdentityOfOne() throws Exception {
 		assertParsed("id(x: Int): Int = x\n\nid 1");
