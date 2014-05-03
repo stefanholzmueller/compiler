@@ -16,7 +16,7 @@ class Evaluator {
 		case FunctionApplication(NameIdentifier(name), args) => {
 			val optFn = env.find(_ == name)
 			if (optFn.isEmpty) {
-				evalLibrary("stefanholzmueller.compiler.library.desugared." + name, args.map(evalWithEnv(_, env)))
+				evalLibrary("stefanholzmueller.compiler.library." + name, args.map(evalWithEnv(_, env)))
 			} else {
 				val fn = optFn.get
 				evalWithEnv(fn.body, env)
@@ -29,7 +29,7 @@ class Evaluator {
 		case FunctionApplication(NameIdentifier(name), args) => {
 			val optAst = env.get(name)
 			if (optAst.isEmpty) {
-				evalLibrary("stefanholzmueller.compiler.library.desugared." + name, args.map(evalWithEnv(_, env)))
+				evalLibrary("stefanholzmueller.compiler.library." + name, args.map(evalWithEnv(_, env)))
 			} else {
 				optAst.get match {
 					case FunctionDefinition(n, r, ps, body) => evalWithEnv(body, env)

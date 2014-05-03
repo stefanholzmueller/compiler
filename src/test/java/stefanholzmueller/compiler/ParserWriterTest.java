@@ -14,7 +14,8 @@ import stefanholzmueller.compiler.Generator.CompilationUnit;
 
 public class ParserWriterTest {
 
-	private static final String OUTPUT_DIR = "target/compiled";
+	private static final String LIBRARY_PATH = "stefanholzmueller/compiler/library";
+	private static final String OUTPUT_PATH = "target/compiled";
 
 	private Parser parser = new SourceParser();
 	private Generator generator = new BytecodeGenerator();
@@ -22,7 +23,7 @@ public class ParserWriterTest {
 
 	@BeforeClass
 	public static void setUp() throws IOException {
-		FileUtils.copyDirectory(new File("target/classes/stefanholzmueller/compiler/library/desugared"), new File(OUTPUT_DIR + "/stefanholzmueller/compiler/library/desugared"));
+		FileUtils.copyDirectory(new File("target/classes/" + LIBRARY_PATH), new File(OUTPUT_PATH + "/" + LIBRARY_PATH));
 	}
 
 	@Test
@@ -43,10 +44,10 @@ public class ParserWriterTest {
 	private void assertProgramOutput(String source, String expected) throws IOException, InterruptedException {
 		AbstractSyntaxTree ast = parser.parse(source);
 		CompilationUnit main = generator.generateMain(ast);
-		emitter.write(main, OUTPUT_DIR);
+		emitter.write(main, OUTPUT_PATH);
 
 		Runtime runtime = Runtime.getRuntime();
-		Process proc = runtime.exec("java -cp " + OUTPUT_DIR + " Main");
+		Process proc = runtime.exec("java -cp " + OUTPUT_PATH + " Main");
 		proc.waitFor();
 
 		BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));

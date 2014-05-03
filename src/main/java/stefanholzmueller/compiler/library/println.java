@@ -1,4 +1,4 @@
-package stefanholzmueller.compiler.library.desugared;
+package stefanholzmueller.compiler.library;
 
 import stefanholzmueller.compiler.library.function.Function1;
 

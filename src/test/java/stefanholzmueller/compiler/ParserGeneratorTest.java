@@ -91,11 +91,11 @@ public class ParserGeneratorTest {
 		expected.append("  // access flags 0x9\n");
 		expected.append("  public static main([Ljava/lang/String;)V\n");
 		expected.append("    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;\n");
-		expected.append("    NEW stefanholzmueller/compiler/library/desugared/println\n");
+		expected.append("    NEW stefanholzmueller/compiler/library/println\n");
 		expected.append("    DUP\n");
-		expected.append("    INVOKESPECIAL stefanholzmueller/compiler/library/desugared/println.<init> ()V\n");
+		expected.append("    INVOKESPECIAL stefanholzmueller/compiler/library/println.<init> ()V\n");
 		expected.append("    LDC \"h\"\n");
-		expected.append("    INVOKEVIRTUAL stefanholzmueller/compiler/library/desugared/println.apply (Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    INVOKEVIRTUAL stefanholzmueller/compiler/library/println.apply (Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
 		expected.append("    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V\n");
 		expected.append("    RETURN\n");
 		expected.append("    MAXSTACK = 3\n");
@@ -120,9 +120,9 @@ public class ParserGeneratorTest {
 		expected.append("  // access flags 0x9\n");
 		expected.append("  public static main([Ljava/lang/String;)V\n");
 		expected.append("    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;\n");
-		expected.append("    NEW stefanholzmueller/compiler/library/desugared/minus\n");
+		expected.append("    NEW stefanholzmueller/compiler/library/minus\n");
 		expected.append("    DUP\n");
-		expected.append("    INVOKESPECIAL stefanholzmueller/compiler/library/desugared/minus.<init> ()V\n");
+		expected.append("    INVOKESPECIAL stefanholzmueller/compiler/library/minus.<init> ()V\n");
 		expected.append("    NEW java/math/BigDecimal\n");
 		expected.append("    DUP\n");
 		expected.append("    SIPUSH 321\n");
@@ -131,7 +131,7 @@ public class ParserGeneratorTest {
 		expected.append("    DUP\n");
 		expected.append("    SIPUSH 123\n");
 		expected.append("    INVOKESPECIAL java/math/BigDecimal.<init> (I)V\n");
-		expected.append("    INVOKEVIRTUAL stefanholzmueller/compiler/library/desugared/minus.apply (Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    INVOKEVIRTUAL stefanholzmueller/compiler/library/minus.apply (Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
 		expected.append("    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V\n");
 		expected.append("    RETURN\n");
 		expected.append("    MAXSTACK = 6\n");

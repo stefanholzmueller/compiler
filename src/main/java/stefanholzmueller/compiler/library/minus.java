@@ -1,4 +1,4 @@
-package stefanholzmueller.compiler.library.desugared;
+package stefanholzmueller.compiler.library;
 
 import java.math.BigDecimal;
 
