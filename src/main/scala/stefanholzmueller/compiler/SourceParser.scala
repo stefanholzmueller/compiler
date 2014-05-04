@@ -31,7 +31,7 @@ class SourceParser extends Parser with StdTokenParsers with PackratParsers {
 	}
 
 	type P[+T] = PackratParser[T]
-	lazy val expression: P[Expression] = functionApplication | explicitParens | explicitNewline | literal | ifExpression
+	lazy val expression: P[Expression] = functionApplication | explicitParens ||| explicitNewline | literal | ifExpression
 	lazy val explicitParens = "(" ~> expression <~ ")"
 	lazy val explicitNewline = expression <~ "\n"
 	lazy val literal: P[Literal] = boolLiteral | intLiteral | stringLiteral
