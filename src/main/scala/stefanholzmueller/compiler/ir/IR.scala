@@ -10,6 +10,8 @@ trait Named {
 }
 trait Typed {
 	def returnType: Type
+	def javaType: String = returnType.getJavaName()
+	def internalType: String = returnType.getInternalType()
 }
 trait Ref extends IR with Named with Typed
 
@@ -22,10 +24,7 @@ trait Fun extends IR with Ref {
 case class LibFun(name: String, returnType: Type, params: List[Param]) extends Fun
 case class UserFun(name: String, returnType: Type, params: List[Param], expr: Expr) extends Fun
 
-trait Expr extends IR with Typed {
-	def javaType: String = returnType.getJavaName()
-	def internalType: String = returnType.getInternalType()
-}
+trait Expr extends IR with Typed
 case class IfExpr(condExpr: Expr, thenExpr: Expr, elseExpr: Expr) extends Expr {
 	def returnType = if (thenExpr.returnType == elseExpr.returnType) thenExpr.returnType else throw new RuntimeException("mixed types in if: " + thenExpr.returnType + " vs. " + elseExpr.returnType)
 }
