@@ -16,6 +16,7 @@ import stefanholzmueller.compiler.Generator.CompilationUnit;
 public class ParserGeneratorTest {
 
 	private Parser parser = new SourceParser();
+	private Analyzer analyzer = new SemanticAnalyzer();
 	private Generator generator = new BytecodeGenerator();
 
 	@Test
@@ -143,7 +144,8 @@ public class ParserGeneratorTest {
 
 	private void assertBytecode(String source, StringBuilder expected) throws IOException {
 		AbstractSyntaxTree ast = parser.parse(source);
-		CompilationUnit compilationUnit = generator.generateMain(ast);
+		AbstractSyntaxTree ast2 = analyzer.analyze(ast);
+		CompilationUnit compilationUnit = generator.generateMain(ast2);
 		String text = textifyBytecode(compilationUnit.getBytes());
 		assertEquals(expected.toString(), text);
 	}

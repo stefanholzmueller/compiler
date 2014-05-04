@@ -52,11 +52,11 @@ class BytecodeGenerator extends Generator {
 		case IntLiteral(i) => { // TODO cleverer alternative to SIPUSH
 			List(new TypeInsnNode(NEW, "java/math/BigDecimal"), new InsnNode(DUP), new IntInsnNode(SIPUSH, i), new MethodInsnNode(INVOKESPECIAL, "java/math/BigDecimal", "<init>", "(I)V", false))
 		}
-		case FunctionApplication(NameIdentifier(n), args) => {
-			val name = "stefanholzmueller/compiler/library/" + n // TODO hack
+		case LibraryFunctionApplication(NameIdentifier(n), args) => {
+			val name = "stefanholzmueller/compiler/library/" + n
 			List(new TypeInsnNode(NEW, name), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, name, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, name, "apply", "(Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;", false))
 		}
-		case _ => throw new RuntimeException
+		case x => throw new RuntimeException(x.toString())
 	}
 
 }

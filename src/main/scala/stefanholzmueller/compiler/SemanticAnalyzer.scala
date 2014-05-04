@@ -8,9 +8,13 @@ class SemanticAnalyzer extends Analyzer {
 	case class ParameterName(name: String) extends Name
 
 	def analyze[T <: AbstractSyntaxTree](ast: T): T = {
-		val env = Map[String, Name]()
-		val env2 = env.updated("plus", LibraryFunctionName("plus")) // TODO maintain
-		analyzeWithEnv(ast, env2)
+		val library = List("lessThan", "minus", "plus", "println") // TODO maintain
+
+		val env = collection.mutable.HashMap[String, Name]()
+		for (l <- library) {
+			env += (l -> LibraryFunctionName(l))
+		}
+		analyzeWithEnv(ast, env.toMap)
 	}
 
 	def analyzeWithEnv[T <: AbstractSyntaxTree](ast: T, env: Map[String, Name]): T = (ast match {
