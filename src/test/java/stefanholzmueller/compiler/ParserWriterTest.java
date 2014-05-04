@@ -62,6 +62,11 @@ public class ParserWriterTest {
 		assertProgramOutput("\"hi\"", "hi\n");
 	}
 
+	@Test
+	public void callUserFunction() throws Exception {
+		assertProgramOutput("id(x: Int): Int = x\nid 1", "1\n");
+	}
+
 	private void assertProgramOutput(String source, String expected) throws IOException, InterruptedException {
 		AbstractSyntaxTree ast = parser.parse(source);
 		IntermediateRepresentation ir = analyzer.analyze(ast);

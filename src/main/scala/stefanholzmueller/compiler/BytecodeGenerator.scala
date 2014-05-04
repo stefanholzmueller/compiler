@@ -31,9 +31,9 @@ class BytecodeGenerator extends Generator {
 	def generate(ir: IntermediateRepresentation): java.util.Collection[CompilationUnit] = ir match {
 		case Prog(funs, Some(expr)) => {
 			val cus = new java.util.ArrayList[CompilationUnit]()
-			//			for (f <- funs) {
-			//				cus.add(generateFunction(f))
-			//			}
+			for (f <- funs) {
+				cus.add(generateFunction(f))
+			}
 			cus.add(generateMain(expr))
 			cus
 		}

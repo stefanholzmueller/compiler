@@ -134,6 +134,59 @@ public class ParserGeneratorTest {
 		assertBytecode(source, expected);
 	}
 
+	@Test
+	public void generateClassFileUserFunctionAndMain() throws Exception {
+		String source = "id(x: Int): Int = x\nid 1";
+
+		StringBuilder expected = new StringBuilder();
+		expected.append("// class version 51.0 (51)\n");
+		expected.append("// access flags 0x1\n");
+		expected.append("// signature Lid;\n");
+		expected.append("// declaration: id extends id\n");
+		expected.append("public class id {\n");
+		expected.append("\n");
+		expected.append("\n");
+		expected.append("  // access flags 0x1\n");
+		expected.append("  public <init>()V\n");
+		expected.append("    ALOAD 0\n");
+		expected.append("    INVOKESPECIAL java/lang/Object.<init> ()V\n");
+		expected.append("    RETURN\n");
+		expected.append("    MAXSTACK = 1\n");
+		expected.append("    MAXLOCALS = 1\n");
+		expected.append("\n");
+		expected.append("  // access flags 0x1\n");
+		expected.append("  public apply(Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    ALOAD 0\n");
+		expected.append("    ARETURN\n");
+		expected.append("    MAXSTACK = 1\n");
+		expected.append("    MAXLOCALS = 2\n");
+		expected.append("}\n");
+		expected.append("// class version 51.0 (51)\n");
+		expected.append("// access flags 0x1\n");
+		expected.append("// signature LMain;\n");
+		expected.append("// declaration: Main extends Main\n");
+		expected.append("public class Main {\n");
+		expected.append("\n");
+		expected.append("\n");
+		expected.append("  // access flags 0x9\n");
+		expected.append("  public static main([Ljava/lang/String;)V\n");
+		expected.append("    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;\n");
+		expected.append("    NEW id\n");
+		expected.append("    DUP\n");
+		expected.append("    INVOKESPECIAL id.<init> ()V\n");
+		expected.append("    NEW java/math/BigDecimal\n");
+		expected.append("    DUP\n");
+		expected.append("    SIPUSH 1\n");
+		expected.append("    INVOKESPECIAL java/math/BigDecimal.<init> (I)V\n");
+		expected.append("    INVOKEVIRTUAL id.apply (Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V\n");
+		expected.append("    RETURN\n");
+		expected.append("    MAXSTACK = 5\n");
+		expected.append("    MAXLOCALS = 1\n");
+		expected.append("}\n");
+		assertBytecode(source, expected);
+	}
+
 	private void assertBytecode(String source, StringBuilder expected) throws IOException {
 		AbstractSyntaxTree ast = parser.parse(source);
 		IntermediateRepresentation ir = analyzer.analyze(ast);
