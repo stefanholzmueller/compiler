@@ -14,6 +14,7 @@ trait Typed {
 trait Ref extends IR with Named with Typed
 
 case class Param(name: String, returnType: String, pos: Int) extends IR with Ref
+case class Var(name: String, returnType: String, pos: Int) extends IR with Expr
 
 trait Function extends IR with Ref {
 	def params: List[Param]
@@ -25,9 +26,7 @@ trait Expr extends IR with Typed
 case class IfExpr(condExpr: Expr, thenExpr: Expr, elseExpr: Expr) extends Expr {
 	def returnType = if (thenExpr.returnType == elseExpr.returnType) thenExpr.returnType else throw new RuntimeException("mixed types in if: " + thenExpr.returnType + " vs. " + elseExpr.returnType)
 }
-case class Apply(function: Function, args: List[Expr]) extends Expr {
-	def returnType = function.returnType
-}
+case class Apply(name: String, returnType: String, args: List[Expr]) extends Expr
 
 trait Literal[T] extends Expr {
 	def value: T

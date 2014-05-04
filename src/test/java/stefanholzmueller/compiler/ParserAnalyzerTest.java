@@ -10,18 +10,17 @@ public class ParserAnalyzerTest {
 
 	@Test
 	public void analyzeParameterReference() throws Exception {
-		assertAnalyzed("id(x: Int): Int = x",
-				"Program(List(FunctionDefinition(NameIdentifier(id),TypeIdentifier(Int),List(Parameter(NameIdentifier(x),TypeIdentifier(Int))),Variable(NameIdentifier(x),TypeIdentifier(Int),Position(1))),None)");
+		assertAnalyzed("id(x: Int): Int = x", "Prog(List(UserFunction(id,Int,List(Param(x,Int,0)),Var(x,Int,0))),None)");
 	}
 
 	@Test
 	public void analyzeLibraryFunction() throws Exception {
-		assertAnalyzed("1 `plus` 2", "Prog(List(),Some(Apply(LibraryFunction(plus,Int,List(Param(a,Int,1), Param(b,Int,2))),List(IntLit(1), IntLit(2)))))");
+		assertAnalyzed("1 `plus` 2", "Prog(List(),Some(Apply(plus,Int,List(IntLit(1), IntLit(2)))))");
 	}
 
 	@Test
 	public void analyzeUserFunction() throws Exception {
-		assertAnalyzed("answer(): Int = 42\nanswer", "Prog(List(UserFunction(answer,Int,List(),IntLit(42))),Some(Apply(UserFunction(answer,Int,List(),IntLit(42)),List())))");
+		assertAnalyzed("answer(): Int = 42\nanswer", "Prog(List(UserFunction(answer,Int,List(),IntLit(42))),Some(Apply(answer,Int,List())))");
 	}
 
 	@Test
