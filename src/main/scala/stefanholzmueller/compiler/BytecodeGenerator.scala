@@ -97,16 +97,14 @@ class BytecodeGenerator extends Generator {
 			generateInstructions(c) ++ List(new MethodInsnNode(INVOKEVIRTUAL, Type.BOOL.getJavaName(), "booleanValue", "()Z", false), new JumpInsnNode(IFEQ, l1)) ++ generateInstructions(t) ++ List(new JumpInsnNode(GOTO, l2), l1) ++ generateInstructions(e) ++ List(l2)
 		}
 		case Apply(n, rt, args) => {
-			List(new TypeInsnNode(NEW, n), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, n, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, n, "apply", deduceDescription(args, rt), false))
+			List(new TypeInsnNode(NEW, n), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, n, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, n, "apply", description(args, rt), false))
 		}
 		case Var(n, rt, pos) => {
-			???
+			List(new VarInsnNode(ALOAD, pos))
 		}
 		case x => throw new RuntimeException(x.toString())
 	}
 
-	private def bytecodify(t: String): String = if (t.size == 1) t else "L" + t + ";"
-	private def description(pts: List[String], rt: String): String = "(" + pts.map(bytecodify).mkString + ")" + bytecodify(rt)
-	private def deduceDescription(args: List[Expr], rt: Type): String = description(args.map(_.javaType), rt.getJavaName())
+	private def description(pts: List[Expr], rt: Type): String = "(" + pts.map(_.internalType).mkString + ")" + rt.getInternalType()
 
 }

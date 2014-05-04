@@ -20,6 +20,10 @@ public enum Type {
 		return javaName;
 	}
 
+	public String getInternalType() {
+		return "L" + javaName + ";";
+	}
+
 	public static Type fromString(String string) {
 		for (Type type : values()) {
 			if (type.getName().equals(string))
