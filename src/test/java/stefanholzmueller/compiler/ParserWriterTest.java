@@ -42,6 +42,11 @@ public class ParserWriterTest {
 		assertProgramOutput("(7 `minus` 5) `minus` 3", "-1\n");
 	}
 
+	@Test
+	public void println() throws Exception {
+		assertProgramOutput("\"hi\"", "hi\n");
+	}
+
 	private void assertProgramOutput(String source, String expected) throws IOException, InterruptedException {
 		AbstractSyntaxTree ast = parser.parse(source);
 		AbstractSyntaxTree ast2 = analyzer.analyze(ast);

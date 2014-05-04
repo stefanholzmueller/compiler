@@ -14,7 +14,7 @@ class SemanticAnalyzer extends Analyzer {
 		env += LibraryFunctionName("lessThan", TypeIdentifier(Types.BOOL));
 		env += LibraryFunctionName("minus", TypeIdentifier(Types.INT));
 		env += LibraryFunctionName("plus", TypeIdentifier(Types.INT));
-		env += LibraryFunctionName("println", TypeIdentifier(Types.PRIMITIVE_VOID));
+		env += LibraryFunctionName("println", TypeIdentifier("V"));
 		analyzeWithEnv(ast, env.map(e => (e.name, e)).toMap)
 	}
 

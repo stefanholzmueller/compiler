@@ -79,7 +79,7 @@ public class ParserGeneratorTest {
 
 	@Test
 	public void generateClassFileWithMainMethodAndFunctionApplication() throws Exception {
-		String source = "println \"h\"";
+		String source = "\"hi\"";
 
 		StringBuilder expected = new StringBuilder();
 		expected.append("// class version 51.0 (51)\n");
@@ -92,14 +92,10 @@ public class ParserGeneratorTest {
 		expected.append("  // access flags 0x9\n");
 		expected.append("  public static main([Ljava/lang/String;)V\n");
 		expected.append("    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;\n");
-		expected.append("    NEW stefanholzmueller/compiler/library/println\n");
-		expected.append("    DUP\n");
-		expected.append("    INVOKESPECIAL stefanholzmueller/compiler/library/println.<init> ()V\n");
-		expected.append("    LDC \"h\"\n");
-		expected.append("    INVOKEVIRTUAL stefanholzmueller/compiler/library/println.apply (Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    LDC \"hi\"\n");
 		expected.append("    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V\n");
 		expected.append("    RETURN\n");
-		expected.append("    MAXSTACK = 3\n");
+		expected.append("    MAXSTACK = 2\n");
 		expected.append("    MAXLOCALS = 1\n");
 		expected.append("}\n");
 

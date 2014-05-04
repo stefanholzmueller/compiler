@@ -63,12 +63,14 @@ class BytecodeGenerator extends Generator {
 		case x => throw new RuntimeException(x.toString())
 	}
 
-	def bytecodify(ti: TypeIdentifier): String = "L" + ti.name.replaceAll("\\.", "/") + ";"
+	def bytecodify(ti: TypeIdentifier): String = if (ti.name.size == 1) ti.name else "L" + ti.name.replaceAll("\\.", "/") + ";"
 	def description(pts: List[TypeIdentifier], rt: TypeIdentifier): String = "(" + pts.map(bytecodify).mkString + ")" + bytecodify(rt)
 	def deduceDescription(args: List[Expression], rt: TypeIdentifier): String = description(deduceTypes(args), rt)
 
 	def deduceTypes(args: List[Expression]): List[TypeIdentifier] = args map {
+		case BoolLiteral(v) => TypeIdentifier(Types.BOOL)
 		case IntLiteral(v) => TypeIdentifier(Types.INT)
+		case StringLiteral(v) => TypeIdentifier(Types.STRING)
 		case semanticFunctionApplication: SemanticFunctionApplication => semanticFunctionApplication.returnType
 		case x => throw new RuntimeException(x.toString())
 	}
