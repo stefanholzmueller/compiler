@@ -48,9 +48,18 @@ class BytecodeGenerator extends Generator {
 	}
 
 	def generateInstructions(expression: AbstractSyntaxTree): List[AbstractInsnNode] = expression match {
-		case StringLiteral(s) => List(new LdcInsnNode(s))
+		case BoolLiteral(i) => {
+			val iconst = if (i) ICONST_1 else ICONST_0
+			List(new TypeInsnNode(NEW, Types.BOOL), new InsnNode(DUP), new InsnNode(iconst), new MethodInsnNode(INVOKESPECIAL, Types.BOOL, "<init>", "(Z)V", false))
+		}
 		case IntLiteral(i) => { // TODO cleverer alternative to SIPUSH
 			List(new TypeInsnNode(NEW, Types.INT), new InsnNode(DUP), new IntInsnNode(SIPUSH, i), new MethodInsnNode(INVOKESPECIAL, Types.INT, "<init>", "(I)V", false))
+		}
+		case StringLiteral(s) => List(new LdcInsnNode(s))
+		case IfExpression(c, t, e) => {
+			val l1 = new LabelNode
+			val l2 = new LabelNode
+			generateInstructions(c) ++ List(new MethodInsnNode(INVOKEVIRTUAL, Types.BOOL, "booleanValue", "()Z", false), new JumpInsnNode(IFEQ, l1)) ++ generateInstructions(t) ++ List(new JumpInsnNode(GOTO, l2), l1) ++ generateInstructions(e) ++ List(l2)
 		}
 		case LibraryFunctionApplication(NameIdentifier(n), args, rt) => {
 			val name = "stefanholzmueller/compiler/library/" + n

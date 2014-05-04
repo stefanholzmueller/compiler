@@ -11,7 +11,7 @@ public class ParserAnalyzerTest {
 	@Test
 	public void analyzeParameterReference() throws Exception {
 		assertAnalyzed("id(x: Int): Int = x",
-				"Program(List(FunctionDefinition(NameIdentifier(id),TypeIdentifier(Int),List(Parameter(NameIdentifier(x),TypeIdentifier(Int))),Variable(NameIdentifier(x),TypeIdentifier(Int)))),None)");
+				"Program(List(FunctionDefinition(NameIdentifier(id),TypeIdentifier(Int),List(Parameter(NameIdentifier(x),TypeIdentifier(Int))),Variable(NameIdentifier(x),TypeIdentifier(Int),Position(1))),None)");
 	}
 
 	@Test

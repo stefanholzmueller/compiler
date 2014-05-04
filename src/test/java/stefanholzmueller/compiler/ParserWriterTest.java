@@ -43,6 +43,21 @@ public class ParserWriterTest {
 	}
 
 	@Test
+	public void evaluateIf() throws Exception {
+		assertProgramOutput("if true then 1 else 0 fi", "1\n");
+	}
+
+	@Test
+	public void evaluateNestedIf() throws Exception {
+		assertProgramOutput("if true then if false then 2 else 3 fi else 0 fi", "3\n");
+	}
+
+	@Test
+	public void evaluateLessThanIf() throws Exception {
+		assertProgramOutput("if (1 `lessThan` 2) then 1 else 0 fi", "1\n");
+	}
+
+	@Test
 	public void println() throws Exception {
 		assertProgramOutput("\"hi\"", "hi\n");
 	}
