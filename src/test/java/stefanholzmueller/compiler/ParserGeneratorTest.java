@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
@@ -23,12 +24,6 @@ public class ParserGeneratorTest {
 	@Test
 	public void generateClassFileWithMainMethod() throws Exception {
 		String source = "\"Hello, World!\"";
-		AbstractSyntaxTree ast = parser.parse(source);
-		CompilationUnit compilationUnit = generator.generateMain(ast);
-
-		assertEquals("Main", compilationUnit.getName());
-
-		String text = textifyBytecode(compilationUnit.getBytes());
 
 		StringBuilder expected = new StringBuilder();
 		expected.append("// class version 51.0 (51)\n");
@@ -47,7 +42,7 @@ public class ParserGeneratorTest {
 		expected.append("    MAXSTACK = 2\n");
 		expected.append("    MAXLOCALS = 1\n");
 		expected.append("}\n");
-		assertEquals(expected.toString(), text);
+		assertBytecode(source, expected);
 	}
 
 	@Test
@@ -105,7 +100,7 @@ public class ParserGeneratorTest {
 
 	@Test
 	public void generateClassFileWithMainMethodAndInfixFunctionApplication() throws Exception {
-		String source = " 321 `minus` 123";
+		String source = "321 `minus` 123";
 
 		StringBuilder expected = new StringBuilder();
 		expected.append("// class version 51.0 (51)\n");
@@ -142,9 +137,13 @@ public class ParserGeneratorTest {
 	private void assertBytecode(String source, StringBuilder expected) throws IOException {
 		AbstractSyntaxTree ast = parser.parse(source);
 		IntermediateRepresentation ir = analyzer.analyze(ast);
-		CompilationUnit compilationUnit = generator.generateMain(ast2);
-		String text = textifyBytecode(compilationUnit.getBytes());
-		assertEquals(expected.toString(), text);
+		Collection<CompilationUnit> compilationUnits = generator.generate(ir);
+
+		StringBuilder text = new StringBuilder();
+		for (CompilationUnit compilationUnit : compilationUnits) {
+			text.append(textifyBytecode(compilationUnit.getBytes()));
+		}
+		assertEquals(expected.toString(), text.toString());
 	}
 
 	private String textifyBytecode(byte[] bytes) throws IOException {

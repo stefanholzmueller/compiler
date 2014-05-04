@@ -65,7 +65,7 @@ public class ParserWriterTest {
 	private void assertProgramOutput(String source, String expected) throws IOException, InterruptedException {
 		AbstractSyntaxTree ast = parser.parse(source);
 		IntermediateRepresentation ir = analyzer.analyze(ast);
-		CompilationUnit main = generator.generateMain(ast2);
+		CompilationUnit main = generator.generate(ir).iterator().next();
 		emitter.write(main, OUTPUT_PATH);
 
 		Runtime runtime = Runtime.getRuntime();
