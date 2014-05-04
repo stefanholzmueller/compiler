@@ -16,7 +16,7 @@ public class ParserAnalyzerTest {
 
 	@Test
 	public void analyzeLibraryFunction() throws Exception {
-		assertAnalyzed("1 `plus` 2", "Program(List(),Some(LibraryFunctionApplication(NameIdentifier(plus),List(IntLiteral(1), IntLiteral(2)),TypeIdentifier(java.math.BigDecimal))))");
+		assertAnalyzed("1 `plus` 2", "Program(List(),Some(LibraryFunctionApplication(NameIdentifier(plus),List(IntLiteral(1), IntLiteral(2)),TypeIdentifier(java/math/BigDecimal))))");
 	}
 
 	@Test

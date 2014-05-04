@@ -50,7 +50,7 @@ class BytecodeGenerator extends Generator {
 	def generateInstructions(expression: AbstractSyntaxTree): List[AbstractInsnNode] = expression match {
 		case StringLiteral(s) => List(new LdcInsnNode(s))
 		case IntLiteral(i) => { // TODO cleverer alternative to SIPUSH
-			List(new TypeInsnNode(NEW, "java/math/BigDecimal"), new InsnNode(DUP), new IntInsnNode(SIPUSH, i), new MethodInsnNode(INVOKESPECIAL, "java/math/BigDecimal", "<init>", "(I)V", false))
+			List(new TypeInsnNode(NEW, Types.INT), new InsnNode(DUP), new IntInsnNode(SIPUSH, i), new MethodInsnNode(INVOKESPECIAL, Types.INT, "<init>", "(I)V", false))
 		}
 		case LibraryFunctionApplication(NameIdentifier(n), args, rt) => {
 			val name = "stefanholzmueller/compiler/library/" + n
@@ -68,7 +68,7 @@ class BytecodeGenerator extends Generator {
 	def deduceDescription(args: List[Expression], rt: TypeIdentifier): String = description(deduceTypes(args), rt)
 
 	def deduceTypes(args: List[Expression]): List[TypeIdentifier] = args map {
-		case IntLiteral(v) => TypeIdentifier("java.math.BigDecimal")
+		case IntLiteral(v) => TypeIdentifier(Types.INT)
 		case semanticFunctionApplication: SemanticFunctionApplication => semanticFunctionApplication.returnType
 		case x => throw new RuntimeException(x.toString())
 	}

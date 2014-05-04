@@ -11,10 +11,10 @@ class SemanticAnalyzer extends Analyzer {
 
 	def analyze[T <: AbstractSyntaxTree](ast: T): T = {
 		val env = collection.mutable.HashSet[Name]() // TODO maintain
-		env += LibraryFunctionName("lessThan", TypeIdentifier("java.util.Boolean"));
-		env += LibraryFunctionName("minus", TypeIdentifier("java.math.BigDecimal"));
-		env += LibraryFunctionName("plus", TypeIdentifier("java.math.BigDecimal"));
-		env += LibraryFunctionName("println", TypeIdentifier("V"));
+		env += LibraryFunctionName("lessThan", TypeIdentifier(Types.BOOL));
+		env += LibraryFunctionName("minus", TypeIdentifier(Types.INT));
+		env += LibraryFunctionName("plus", TypeIdentifier(Types.INT));
+		env += LibraryFunctionName("println", TypeIdentifier(Types.PRIMITIVE_VOID));
 		analyzeWithEnv(ast, env.map(e => (e.name, e)).toMap)
 	}
 
