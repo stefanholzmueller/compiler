@@ -22,9 +22,10 @@ case class UserFunctionApplication(nameIdentifier: NameIdentifier, arguments: Li
 
 case class Program(functionDefinitions: List[FunctionDefinition], main: Option[Expression]) extends AST
 
-// IR
-trait IntermediateRepresentation extends Expression {
+trait IntermediateRepresentation {
 	//	def returnType: TypeIdentifier
 }
-trait SemanticFunctionApplication extends IntermediateRepresentation
-case class Variable(nameIdentifier: NameIdentifier) extends IntermediateRepresentation
+trait SemanticFunctionApplication extends Expression with IntermediateRepresentation
+trait PseudoFunctionApplication extends SemanticFunctionApplication
+
+case class Variable(nameIdentifier: NameIdentifier) extends PseudoFunctionApplication

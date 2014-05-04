@@ -37,7 +37,7 @@ class SourceParser extends Parser with StdTokenParsers with PackratParsers {
 	lazy val literal: P[Literal] = boolLiteral | intLiteral | stringLiteral
 	lazy val boolLiteral: P[BoolLiteral] = ("true" | "false") ^^ (str => BoolLiteral(java.lang.Boolean.parseBoolean(str)))
 	lazy val intLiteral: P[IntLiteral] = numericLit ^^ (str => IntLiteral(java.lang.Integer.parseInt(str)))
-	lazy val stringLiteral: P[StringLiteral] = stringLit ^^ (str => StringLiteral(str)) // TODO escaping broken, see JavaTokenParsers?
+	lazy val stringLiteral: P[StringLiteral] = stringLit ^^ StringLiteral // TODO escaping broken, see JavaTokenParsers?
 	lazy val ifExpression: P[IfExpression] = "if" ~ expression ~ "then" ~ expression ~ "else" ~ expression ~ "fi" ^^ { case "if" ~ condExpr ~ "then" ~ thenExpr ~ "else" ~ elseExpr ~ "fi" => IfExpression(condExpr, thenExpr, elseExpr) }
 
 	lazy val functionDefinition: P[FunctionDefinition] = nameIdentifier ~ parameterList ~ ":" ~ typeIdentifier ~ "=" ~ expression ^^ { case name ~ parameterList ~ ":" ~ returnType ~ "=" ~ body => FunctionDefinition(name, returnType, parameterList, body) }
