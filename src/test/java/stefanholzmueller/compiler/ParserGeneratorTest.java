@@ -9,6 +9,7 @@ import java.io.StringWriter;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import stefanholzmueller.compiler.Generator.CompilationUnit;
@@ -151,7 +152,9 @@ public class ParserGeneratorTest {
 		ClassReader cr = new ClassReader(is);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
-		cr.accept(new TraceClassVisitor(pw), 0);
+		TraceClassVisitor tcv = new TraceClassVisitor(pw);
+		CheckClassAdapter cca = new CheckClassAdapter(tcv);
+		cr.accept(cca, 0);
 		return sw.toString();
 	}
 }
