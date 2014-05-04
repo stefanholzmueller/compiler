@@ -44,7 +44,7 @@ class BytecodeGenerator extends Generator {
 
 			new ClassFile(className, bytes)
 		}
-		case _ => throw new RuntimeException
+		case x => throw new RuntimeException(x.toString())
 	}
 
 	def generateInstructions(expression: AbstractSyntaxTree): List[AbstractInsnNode] = expression match {
@@ -52,10 +52,24 @@ class BytecodeGenerator extends Generator {
 		case IntLiteral(i) => { // TODO cleverer alternative to SIPUSH
 			List(new TypeInsnNode(NEW, "java/math/BigDecimal"), new InsnNode(DUP), new IntInsnNode(SIPUSH, i), new MethodInsnNode(INVOKESPECIAL, "java/math/BigDecimal", "<init>", "(I)V", false))
 		}
-		case LibraryFunctionApplication(NameIdentifier(n), args) => {
+		case LibraryFunctionApplication(NameIdentifier(n), args, rt) => {
 			val name = "stefanholzmueller/compiler/library/" + n
-			List(new TypeInsnNode(NEW, name), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, name, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, name, "apply", "(Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;", false))
+			List(new TypeInsnNode(NEW, name), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, name, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, name, "apply", deduceDescription(args, rt), false))
 		}
+		case UserFunctionApplication(NameIdentifier(name), args, rt) => {
+			List(new TypeInsnNode(NEW, name), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, name, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, name, "apply", deduceDescription(args, rt), false))
+		}
+		case Variable(n, rt) => ???
+		case x => throw new RuntimeException(x.toString())
+	}
+
+	def bytecodify(ti: TypeIdentifier): String = "L" + ti.name.replaceAll("\\.", "/") + ";"
+	def description(pts: List[TypeIdentifier], rt: TypeIdentifier): String = "(" + pts.map(bytecodify).mkString + ")" + bytecodify(rt)
+	def deduceDescription(args: List[Expression], rt: TypeIdentifier): String = description(deduceTypes(args), rt)
+
+	def deduceTypes(args: List[Expression]): List[TypeIdentifier] = args map {
+		case IntLiteral(v) => TypeIdentifier("java.math.BigDecimal")
+		case semanticFunctionApplication: SemanticFunctionApplication => semanticFunctionApplication.returnType
 		case x => throw new RuntimeException(x.toString())
 	}
 

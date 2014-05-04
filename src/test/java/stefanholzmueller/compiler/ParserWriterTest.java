@@ -18,6 +18,7 @@ public class ParserWriterTest {
 	private static final String OUTPUT_PATH = "target/compiled";
 
 	private Parser parser = new SourceParser();
+	private Analyzer analyzer = new SemanticAnalyzer();
 	private Generator generator = new BytecodeGenerator();
 	private Writer emitter = new BytecodeWriter();
 
@@ -37,13 +38,14 @@ public class ParserWriterTest {
 	}
 
 	@Test
-	public void evaluateMiusMinusWithExplicitParens() throws Exception {
+	public void evaluateMinusMinusWithExplicitParens() throws Exception {
 		assertProgramOutput("(7 `minus` 5) `minus` 3", "-1\n");
 	}
 
 	private void assertProgramOutput(String source, String expected) throws IOException, InterruptedException {
 		AbstractSyntaxTree ast = parser.parse(source);
-		CompilationUnit main = generator.generateMain(ast);
+		AbstractSyntaxTree ast2 = analyzer.analyze(ast);
+		CompilationUnit main = generator.generateMain(ast2);
 		emitter.write(main, OUTPUT_PATH);
 
 		Runtime runtime = Runtime.getRuntime();
