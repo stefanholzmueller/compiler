@@ -67,11 +67,17 @@ public class ParserWriterTest {
 		assertProgramOutput("id(x: Int): Int = x\nid 1", "1\n");
 	}
 
+	@Test
+	public void succ() throws Exception {
+		assertProgramOutput("succ(n: Int): Int = (n `plus` 1)\n(succ 3)", "4\n");
+	}
+
 	private void assertProgramOutput(String source, String expected) throws IOException, InterruptedException {
 		AbstractSyntaxTree ast = parser.parse(source);
 		IntermediateRepresentation ir = analyzer.analyze(ast);
-		CompilationUnit main = generator.generate(ir).iterator().next();
-		emitter.write(main, OUTPUT_PATH);
+		for (CompilationUnit compilationUnit : generator.generate(ir)) {
+			emitter.write(compilationUnit, OUTPUT_PATH);
+		}
 
 		Runtime runtime = Runtime.getRuntime();
 		Process proc = runtime.exec("java -cp " + OUTPUT_PATH + " Main");

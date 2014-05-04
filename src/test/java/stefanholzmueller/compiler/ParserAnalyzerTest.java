@@ -28,6 +28,12 @@ public class ParserAnalyzerTest {
 		assertAnalyzed("id(x: Int): Int = id x", "Prog(List(UserFun(id,INT,List(Param(x,INT,0)),Apply(id,INT,List(Var(x,INT,0))))),None)");
 	}
 
+	@Test
+	public void succ() throws Exception {
+		assertAnalyzed("succ(n: Int): Int = (n `plus` 1)\n(succ 3)",
+				"Prog(List(UserFun(succ,INT,List(Param(n,INT,0)),Apply(stefanholzmueller/compiler/library/plus,INT,List(Var(n,INT,0), IntLit(1))))),Some(Apply(succ,INT,List(IntLit(3)))))");
+	}
+
 	private void assertAnalyzed(String input, String expected) {
 		AbstractSyntaxTree ast = parser.parse(input);
 		IntermediateRepresentation ir = analyzer.analyze(ast);

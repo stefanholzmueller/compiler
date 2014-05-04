@@ -142,7 +142,7 @@ class BytecodeGenerator extends Generator {
 			List(new TypeInsnNode(NEW, n), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, n, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, n, "apply", description(args, rt), false))
 		}
 		case Var(n, rt, pos) => {
-			List(new VarInsnNode(ALOAD, pos))
+			List(new VarInsnNode(ALOAD, pos + 1))
 		}
 		case x => throw new RuntimeException(x.toString())
 	}
