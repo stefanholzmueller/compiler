@@ -30,8 +30,15 @@ public class ParserAnalyzerTest {
 
 	@Test
 	public void succ() throws Exception {
-		assertAnalyzed("succ(n: Int): Int = (n `plus` 1)\n(succ 3)",
+		assertAnalyzed(Examples.SUCC,
 				"Prog(List(UserFun(succ,INT,List(Param(n,INT,0)),Apply(stefanholzmueller/compiler/library/plus,INT,List(Var(n,INT,0), IntLit(1))))),Some(Apply(succ,INT,List(IntLit(3)))))");
+	}
+
+	@Test
+	public void fact() throws Exception {
+		assertAnalyzed(
+				Examples.FACT,
+				"Prog(List(UserFun(fact,INT,List(Param(n,INT,0)),IfExpr(Apply(stefanholzmueller/compiler/library/lessThan,BOOL,List(Var(n,INT,0), IntLit(2))),IntLit(1),Apply(stefanholzmueller/compiler/library/mult,INT,List(Var(n,INT,0), Apply(fact,INT,List(Apply(stefanholzmueller/compiler/library/minus,INT,List(Var(n,INT,0), IntLit(1)))))))))),Some(Apply(fact,INT,List(IntLit(4)))))");
 	}
 
 	private void assertAnalyzed(String input, String expected) {

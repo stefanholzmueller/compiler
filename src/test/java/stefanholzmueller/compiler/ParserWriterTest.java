@@ -69,7 +69,17 @@ public class ParserWriterTest {
 
 	@Test
 	public void succ() throws Exception {
-		assertProgramOutput("succ(n: Int): Int = (n `plus` 1)\n(succ 3)", "4\n");
+		assertProgramOutput(Examples.SUCC, "4\n");
+	}
+
+	@Test
+	public void fact() throws Exception {
+		assertProgramOutput(Examples.FACT, "24\n");
+	}
+
+	@Test
+	public void fib() throws Exception {
+		assertProgramOutput(Examples.FIB, "13\n");
 	}
 
 	private void assertProgramOutput(String source, String expected) throws IOException, InterruptedException {

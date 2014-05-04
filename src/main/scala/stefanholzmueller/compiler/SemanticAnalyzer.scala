@@ -33,6 +33,7 @@ class SemanticAnalyzer extends Analyzer {
 		val library = collection.mutable.ListBuffer[Ref]() // TODO maintain
 		library += LibFun("lessThan", Type.BOOL, List(Param("a", Type.INT, 1), Param("b", Type.INT, 2)));
 		library += LibFun("minus", Type.INT, List(Param("a", Type.INT, 1), Param("b", Type.INT, 2)));
+		library += LibFun("mult", Type.INT, List(Param("a", Type.INT, 1), Param("b", Type.INT, 2)));
 		library += LibFun("plus", Type.INT, List(Param("a", Type.INT, 1), Param("b", Type.INT, 2)));
 		analyzeWithEnv(ast, pairWithName(library.toList))
 	}
@@ -45,7 +46,7 @@ class SemanticAnalyzer extends Analyzer {
 						case FunctionDefinition(NameIdentifier(n), TypeIdentifier(rt), ps, expr) => {
 							val params = convertParams(ps)
 							val env2 = env ++ pairWithName(params)
-							UserFun(n, Type.fromString(rt), params, NoOp(Type.STR)) // TODO hack!
+							UserFun(n, Type.fromString(rt), params, null) // null = hack! but otherwise cyclic dependency
 						}
 					}))
 			})
@@ -53,7 +54,7 @@ class SemanticAnalyzer extends Analyzer {
 		}
 		case FunctionDefinition(NameIdentifier(n), TypeIdentifier(rt), ps, expr) => {
 			val params = convertParams(ps)
-			val env2 = env ++ pairWithName(params)
+			val env2 = env ++ pairWithName(List(UserFun(n, Type.fromString(rt), params, null))) ++ pairWithName(params)
 			UserFun(n, Type.fromString(rt), params, analyzeWithEnv(expr, env2).asInstanceOf[Expr])
 		}
 		case FunctionApplication(NameIdentifier(n), args) => env.get(n) match {
@@ -64,7 +65,7 @@ class SemanticAnalyzer extends Analyzer {
 				else throw new RuntimeException("parameter called with arguments")
 			}
 			case Some(_) => throw new AssertionError("unhandled Ref")
-			case None => throw new RuntimeException("unbound reference")
+			case None => throw new RuntimeException("unbound reference: " + FunctionApplication(NameIdentifier(n), args) + "\n\n" + env)
 		}
 		case IfExpression(c, t, e) => IfExpr(analyzeWithEnv(c, env).asInstanceOf[Expr], analyzeWithEnv(t, env).asInstanceOf[Expr], analyzeWithEnv(e, env).asInstanceOf[Expr])
 		case IntLiteral(v) => IntLit(v)

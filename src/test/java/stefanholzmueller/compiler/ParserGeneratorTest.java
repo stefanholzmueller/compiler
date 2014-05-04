@@ -189,7 +189,7 @@ public class ParserGeneratorTest {
 
 	@Test
 	public void succ() throws Exception {
-		String source = "succ(n: Int): Int = (n `plus` 1)\n(succ 3)";
+		String source = Examples.SUCC;
 
 		StringBuilder expected = new StringBuilder();
 		expected.append("// class version 51.0 (51)\n");
@@ -240,6 +240,96 @@ public class ParserGeneratorTest {
 		expected.append("    SIPUSH 3\n");
 		expected.append("    INVOKESPECIAL java/math/BigDecimal.<init> (I)V\n");
 		expected.append("    INVOKEVIRTUAL succ.apply (Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V\n");
+		expected.append("    RETURN\n");
+		expected.append("    MAXSTACK = 5\n");
+		expected.append("    MAXLOCALS = 1\n");
+		expected.append("}\n");
+		assertBytecode(source, expected);
+	}
+
+	@Test
+	public void fact() throws Exception {
+		String source = Examples.FACT;
+
+		StringBuilder expected = new StringBuilder();
+		expected.append("// class version 51.0 (51)\n");
+		expected.append("// access flags 0x1\n");
+		expected.append("// signature Lfact;\n");
+		expected.append("// declaration: fact extends fact\n");
+		expected.append("public class fact {\n");
+		expected.append("\n");
+		expected.append("\n");
+		expected.append("  // access flags 0x1\n");
+		expected.append("  public <init>()V\n");
+		expected.append("    ALOAD 0\n");
+		expected.append("    INVOKESPECIAL java/lang/Object.<init> ()V\n");
+		expected.append("    RETURN\n");
+		expected.append("    MAXSTACK = 1\n");
+		expected.append("    MAXLOCALS = 1\n");
+		expected.append("\n");
+		expected.append("  // access flags 0x1\n");
+		expected.append("  public apply(Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    NEW stefanholzmueller/compiler/library/lessThan\n");
+		expected.append("    DUP\n");
+		expected.append("    INVOKESPECIAL stefanholzmueller/compiler/library/lessThan.<init> ()V\n");
+		expected.append("    ALOAD 1\n");
+		expected.append("    NEW java/math/BigDecimal\n");
+		expected.append("    DUP\n");
+		expected.append("    SIPUSH 2\n");
+		expected.append("    INVOKESPECIAL java/math/BigDecimal.<init> (I)V\n");
+		expected.append("    INVOKEVIRTUAL stefanholzmueller/compiler/library/lessThan.apply (Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/lang/Boolean;\n");
+		expected.append("    INVOKEVIRTUAL java/lang/Boolean.booleanValue ()Z\n");
+		expected.append("    IFEQ L0\n");
+		expected.append("    NEW java/math/BigDecimal\n");
+		expected.append("    DUP\n");
+		expected.append("    SIPUSH 1\n");
+		expected.append("    INVOKESPECIAL java/math/BigDecimal.<init> (I)V\n");
+		expected.append("    GOTO L1\n");
+		expected.append("   L0\n");
+		expected.append("   FRAME SAME\n");
+		expected.append("    NEW stefanholzmueller/compiler/library/mult\n");
+		expected.append("    DUP\n");
+		expected.append("    INVOKESPECIAL stefanholzmueller/compiler/library/mult.<init> ()V\n");
+		expected.append("    ALOAD 1\n");
+		expected.append("    NEW fact\n");
+		expected.append("    DUP\n");
+		expected.append("    INVOKESPECIAL fact.<init> ()V\n");
+		expected.append("    NEW stefanholzmueller/compiler/library/minus\n");
+		expected.append("    DUP\n");
+		expected.append("    INVOKESPECIAL stefanholzmueller/compiler/library/minus.<init> ()V\n");
+		expected.append("    ALOAD 1\n");
+		expected.append("    NEW java/math/BigDecimal\n");
+		expected.append("    DUP\n");
+		expected.append("    SIPUSH 1\n");
+		expected.append("    INVOKESPECIAL java/math/BigDecimal.<init> (I)V\n");
+		expected.append("    INVOKEVIRTUAL stefanholzmueller/compiler/library/minus.apply (Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    INVOKEVIRTUAL fact.apply (Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("    INVOKEVIRTUAL stefanholzmueller/compiler/library/mult.apply (Ljava/math/BigDecimal;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
+		expected.append("   L1\n");
+		expected.append("   FRAME SAME1 java/math/BigDecimal\n");
+		expected.append("    ARETURN\n");
+		expected.append("    MAXSTACK = 8\n");
+		expected.append("    MAXLOCALS = 2\n");
+		expected.append("}\n");
+		expected.append("// class version 51.0 (51)\n");
+		expected.append("// access flags 0x1\n");
+		expected.append("// signature LMain;\n");
+		expected.append("// declaration: Main extends Main\n");
+		expected.append("public class Main {\n");
+		expected.append("\n");
+		expected.append("\n");
+		expected.append("  // access flags 0x9\n");
+		expected.append("  public static main([Ljava/lang/String;)V\n");
+		expected.append("    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;\n");
+		expected.append("    NEW fact\n");
+		expected.append("    DUP\n");
+		expected.append("    INVOKESPECIAL fact.<init> ()V\n");
+		expected.append("    NEW java/math/BigDecimal\n");
+		expected.append("    DUP\n");
+		expected.append("    SIPUSH 4\n");
+		expected.append("    INVOKESPECIAL java/math/BigDecimal.<init> (I)V\n");
+		expected.append("    INVOKEVIRTUAL fact.apply (Ljava/math/BigDecimal;)Ljava/math/BigDecimal;\n");
 		expected.append("    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V\n");
 		expected.append("    RETURN\n");
 		expected.append("    MAXSTACK = 5\n");

@@ -16,8 +16,8 @@ public class ParserTest {
 	@Test
 	public void succ() throws Exception {
 		assertParsed(
-				"succ(n: Int): Int = (x `plus` 1)\n(succ 3)",
-				"Program(List(FunctionDefinition(NameIdentifier(succ),TypeIdentifier(Int),List(Parameter(NameIdentifier(n),TypeIdentifier(Int))),FunctionApplication(NameIdentifier(plus),List(FunctionApplication(NameIdentifier(x),List()), IntLiteral(1))))),Some(FunctionApplication(NameIdentifier(succ),List(IntLiteral(3)))))");
+				Examples.SUCC,
+				"Program(List(FunctionDefinition(NameIdentifier(succ),TypeIdentifier(Int),List(Parameter(NameIdentifier(n),TypeIdentifier(Int))),FunctionApplication(NameIdentifier(plus),List(FunctionApplication(NameIdentifier(n),List()), IntLiteral(1))))),Some(FunctionApplication(NameIdentifier(succ),List(IntLiteral(3)))))");
 	}
 
 	private void assertParsed(String input, String expected) {
