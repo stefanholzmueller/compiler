@@ -141,7 +141,7 @@ public class ParserGeneratorTest {
 
 	private void assertBytecode(String source, StringBuilder expected) throws IOException {
 		AbstractSyntaxTree ast = parser.parse(source);
-		AbstractSyntaxTree ast2 = analyzer.analyze(ast);
+		IntermediateRepresentation ir = analyzer.analyze(ast);
 		CompilationUnit compilationUnit = generator.generateMain(ast2);
 		String text = textifyBytecode(compilationUnit.getBytes());
 		assertEquals(expected.toString(), text);

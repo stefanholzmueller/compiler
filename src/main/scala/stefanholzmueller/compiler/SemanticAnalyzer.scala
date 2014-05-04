@@ -1,39 +1,75 @@
 package stefanholzmueller.compiler
 
+import stefanholzmueller.compiler.ast.TypeIdentifier
+import stefanholzmueller.compiler.ast.Program
+import stefanholzmueller.compiler.ast.NameIdentifier
+import stefanholzmueller.compiler.ast.IfExpression
+import stefanholzmueller.compiler.ast.FunctionDefinition
+import stefanholzmueller.compiler.ast.FunctionApplication
+import stefanholzmueller.compiler.ir.IR
+import stefanholzmueller.compiler.ir.LibraryFunction
+import stefanholzmueller.compiler.ir.Param
+import stefanholzmueller.compiler.ir.UserFunction
+import stefanholzmueller.compiler.ir.Prog
+import stefanholzmueller.compiler.ir.Expr
+import stefanholzmueller.compiler.ir.Function
+import stefanholzmueller.compiler.ast.Parameter
+import stefanholzmueller.compiler.ast.TypeIdentifier
+import stefanholzmueller.compiler.ir.Typed
+import stefanholzmueller.compiler.ir.Named
+import stefanholzmueller.compiler.ir.Ref
+import stefanholzmueller.compiler.ir.IfExpr
+import stefanholzmueller.compiler.ir.Apply
+import stefanholzmueller.compiler.ast.IntLiteral
+import stefanholzmueller.compiler.ir.IntLit
+import stefanholzmueller.compiler.ast.BoolLiteral
+import stefanholzmueller.compiler.ast.StringLiteral
+import stefanholzmueller.compiler.ir.BoolLit
+import stefanholzmueller.compiler.ir.StrLit
+
 class SemanticAnalyzer extends Analyzer {
 
-	sealed trait Name extends IntermediateRepresentation {
-		def name: String
-	}
-	case class LibraryFunctionName(name: String, returnType: TypeIdentifier) extends Name
-	case class UserFunctionName(name: String, returnType: TypeIdentifier) extends Name
-	case class ParameterName(name: String, returnType: TypeIdentifier) extends Name
+	type Env = Map[String, Ref]
 
-	def analyze[T <: AbstractSyntaxTree](ast: T): T = {
-		val env = collection.mutable.HashSet[Name]() // TODO maintain
-		env += LibraryFunctionName("lessThan", TypeIdentifier(Types.BOOL));
-		env += LibraryFunctionName("minus", TypeIdentifier(Types.INT));
-		env += LibraryFunctionName("plus", TypeIdentifier(Types.INT));
-		env += LibraryFunctionName("println", TypeIdentifier("V"));
-		analyzeWithEnv(ast, env.map(e => (e.name, e)).toMap)
+	def analyze(ast: AbstractSyntaxTree): IntermediateRepresentation = {
+		val library = collection.mutable.ListBuffer[Ref]() // TODO maintain
+		library += LibraryFunction("lessThan", "Bool", List(Param("a", "Int", 1), Param("b", "Int", 2)));
+		library += LibraryFunction("minus", "Int", List(Param("a", "Int", 1), Param("b", "Int", 2)));
+		library += LibraryFunction("plus", "Int", List(Param("a", "Int", 1), Param("b", "Int", 2)));
+		analyzeWithEnv(ast, pairWithName(library.toList))
 	}
 
-	def analyzeWithEnv[T <: AbstractSyntaxTree](ast: T, env: Map[String, Name]): T = (ast match {
+	private def analyzeWithEnv(ast: AbstractSyntaxTree, env: Env): IntermediateRepresentation = ast match {
 		case Program(fds, b) => {
-			val env2 = env ++ (fds.map(fd => (fd.nameIdentifier.name, UserFunctionName(fd.nameIdentifier.name, fd.returnType))))
-			Program(fds.map(fd => analyzeWithEnv(fd, env2)), b.map(e => analyzeWithEnv(e, env2)))
+			val env2: Env = env ++ (fds map {
+				case FunctionDefinition(NameIdentifier(n), TypeIdentifier(rt), ps, expr) =>
+					(n -> UserFunction(n, rt, convertParams(ps), analyzeWithEnv(expr, env).asInstanceOf[Expr]))
+			})
+			Prog(recurse(fds, env2).asInstanceOf[List[Function]], b.map(e => analyzeWithEnv(e, env2).asInstanceOf[Expr]))
 		}
-		case FunctionDefinition(ni, rt, ps, body) => {
-			val env2 = env ++ (ps.map(p => (p.nameIdentifier.name, ParameterName(p.nameIdentifier.name, p.typeIdentifier))))
-			FunctionDefinition(ni, rt, ps, analyzeWithEnv(body, env2))
+		case FunctionDefinition(NameIdentifier(n), TypeIdentifier(rt), ps, expr) => {
+			val env2 = env ++ pairWithName(convertParams(ps))
+			UserFunction(n, rt, convertParams(ps), analyzeWithEnv(expr, env2).asInstanceOf[Expr])
 		}
 		case FunctionApplication(NameIdentifier(n), args) => env.get(n) match {
-			case Some(LibraryFunctionName(n, rt)) => LibraryFunctionApplication(NameIdentifier(n), args.map(a => analyzeWithEnv(a, env)), rt)
-			case Some(UserFunctionName(n, rt)) => UserFunctionApplication(NameIdentifier(n), args.map(a => analyzeWithEnv(a, env)), rt)
-			case Some(ParameterName(n, rt)) => if (args.isEmpty) Variable(NameIdentifier(n), rt) else throw new RuntimeException("parameter called with arguments")
-			case None => throw new RuntimeException("unbound variable")
+			case Some(LibraryFunction(n, rt, ps)) => Apply(LibraryFunction(n, rt, ps), args.map(a => analyzeWithEnv(a, env)).asInstanceOf[List[Expr]]).asInstanceOf[IntermediateRepresentation]
+			case Some(UserFunction(n, rt, ps, expr)) => Apply(UserFunction(n, rt, ps, expr), args.map(a => analyzeWithEnv(a, env)).asInstanceOf[List[Expr]]).asInstanceOf[IntermediateRepresentation]
+			case Some(Param(n, rt, pos)) => {
+				if (args.isEmpty) Param(n, rt, pos)
+				else throw new RuntimeException("parameter called with arguments")
+			}
+			case Some(_) => throw new AssertionError("unhandled Ref")
+			case None => throw new RuntimeException("unbound reference")
 		}
-		case IfExpression(c, t, e) => IfExpression(analyzeWithEnv(c, env), analyzeWithEnv(t, env), analyzeWithEnv(e, env))
-		case x => x
-	}).asInstanceOf[T]
+		case IfExpression(c, t, e) => IfExpr(analyzeWithEnv(c, env).asInstanceOf[Expr], analyzeWithEnv(t, env).asInstanceOf[Expr], analyzeWithEnv(e, env).asInstanceOf[Expr]).asInstanceOf[IntermediateRepresentation]
+		case IntLiteral(v) => IntLit(v)
+		case BoolLiteral(v) => BoolLit(v)
+		case StringLiteral(v) => StrLit(v)
+	}
+
+	private def recurse(list: List[AbstractSyntaxTree], env: Env): List[IntermediateRepresentation] = list.map(a => analyzeWithEnv(a, env))
+
+	private def convertParams(ps: List[Parameter]): List[Param] = ps.zipWithIndex map { case (Parameter(NameIdentifier(n), TypeIdentifier(t)), i) => Param(n, t, i) }
+	private def pairWithName(refs: List[Ref]): Env = refs.map(r => (r.name -> r)).toMap
+
 }

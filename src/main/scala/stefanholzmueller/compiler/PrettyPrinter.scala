@@ -1,5 +1,27 @@
 package stefanholzmueller.compiler
 
+import stefanholzmueller.compiler.ast.TypeIdentifier
+
+import stefanholzmueller.compiler.ast.StringLiteral
+
+import stefanholzmueller.compiler.ast.Program
+
+import stefanholzmueller.compiler.ast.Parameter
+
+import stefanholzmueller.compiler.ast.NameIdentifier
+
+import stefanholzmueller.compiler.ast.IntLiteral
+
+import stefanholzmueller.compiler.ast.IfExpression
+
+import stefanholzmueller.compiler.ast.FunctionDefinition
+
+import stefanholzmueller.compiler.ast.FunctionApplication
+
+import stefanholzmueller.compiler.ast.BoolLiteral
+
+import stefanholzmueller.compiler.ast.AST
+
 class PrettyPrinter extends Printer {
 	def print(ast: AbstractSyntaxTree): String = {
 		ast match {

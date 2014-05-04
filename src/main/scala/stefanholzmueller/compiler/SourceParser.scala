@@ -3,6 +3,19 @@ package stefanholzmueller.compiler
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.combinator.lexical.StdLexical
 import scala.util.parsing.combinator.PackratParsers
+import stefanholzmueller.compiler.ast.TypeIdentifier
+import stefanholzmueller.compiler.ast.StringLiteral
+import stefanholzmueller.compiler.ast.Program
+import stefanholzmueller.compiler.ast.Parameter
+import stefanholzmueller.compiler.ast.NameIdentifier
+import stefanholzmueller.compiler.ast.Literal
+import stefanholzmueller.compiler.ast.IntLiteral
+import stefanholzmueller.compiler.ast.IfExpression
+import stefanholzmueller.compiler.ast.FunctionDefinition
+import stefanholzmueller.compiler.ast.FunctionApplication
+import stefanholzmueller.compiler.ast.Expression
+import stefanholzmueller.compiler.ast.BoolLiteral
+import stefanholzmueller.compiler.ast.AST
 
 class SourceParser extends Parser with StdTokenParsers with PackratParsers {
 	type Tokens = StdLexical

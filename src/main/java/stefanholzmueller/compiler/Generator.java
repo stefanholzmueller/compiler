@@ -1,10 +1,14 @@
 package stefanholzmueller.compiler;
 
+import java.util.Collection;
+
 public interface Generator {
 
 	CompilationUnit generateFunction(AbstractSyntaxTree functionDefinition);
 
 	CompilationUnit generateMain(AbstractSyntaxTree expression);
+
+	Collection<CompilationUnit> generate(IntermediateRepresentation ir);
 
 	public interface CompilationUnit {
 

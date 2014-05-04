@@ -5,8 +5,20 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm.tree._
 import stefanholzmueller.compiler.Generator.ClassFile
+import stefanholzmueller.compiler.Generator.CompilationUnit
+import stefanholzmueller.compiler.ast.TypeIdentifier
+import stefanholzmueller.compiler.ast.StringLiteral
+import stefanholzmueller.compiler.ast.Program
+import stefanholzmueller.compiler.ast.IntLiteral
+import stefanholzmueller.compiler.ast.IfExpression
+import stefanholzmueller.compiler.ast.Expression
+import stefanholzmueller.compiler.ast.BoolLiteral
 
 class BytecodeGenerator extends Generator {
+
+	def generate(ir: IntermediateRepresentation): java.util.Collection[CompilationUnit] = {
+		???
+	}
 
 	def generateFunction(functionDefinition: AbstractSyntaxTree): ClassFile = {
 		???
@@ -61,26 +73,26 @@ class BytecodeGenerator extends Generator {
 			val l2 = new LabelNode
 			generateInstructions(c) ++ List(new MethodInsnNode(INVOKEVIRTUAL, Types.BOOL, "booleanValue", "()Z", false), new JumpInsnNode(IFEQ, l1)) ++ generateInstructions(t) ++ List(new JumpInsnNode(GOTO, l2), l1) ++ generateInstructions(e) ++ List(l2)
 		}
-		case LibraryFunctionApplication(NameIdentifier(n), args, rt) => {
-			val name = "stefanholzmueller/compiler/library/" + n
-			List(new TypeInsnNode(NEW, name), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, name, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, name, "apply", deduceDescription(args, rt), false))
-		}
-		case UserFunctionApplication(NameIdentifier(name), args, rt) => {
-			List(new TypeInsnNode(NEW, name), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, name, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, name, "apply", deduceDescription(args, rt), false))
-		}
-		case Variable(n, rt) => ???
+		//		case LibraryFunctionApplication(NameIdentifier(n), args, rt) => {
+		//			val name = "stefanholzmueller/compiler/library/" + n
+		//			List(new TypeInsnNode(NEW, name), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, name, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, name, "apply", deduceDescription(args, rt), false))
+		//		}
+		//		case UserFunctionApplication(NameIdentifier(name), args, rt) => {
+		//			List(new TypeInsnNode(NEW, name), new InsnNode(DUP), new MethodInsnNode(INVOKESPECIAL, name, "<init>", "()V", false)) ++ args.map(generateInstructions(_)).flatten ++ List(new MethodInsnNode(INVOKEVIRTUAL, name, "apply", deduceDescription(args, rt), false))
+		//		}
+		//		case Variable(n, rt, p) => ???
 		case x => throw new RuntimeException(x.toString())
 	}
 
-	def bytecodify(ti: TypeIdentifier): String = if (ti.name.size == 1) ti.name else "L" + ti.name.replaceAll("\\.", "/") + ";"
-	def description(pts: List[TypeIdentifier], rt: TypeIdentifier): String = "(" + pts.map(bytecodify).mkString + ")" + bytecodify(rt)
-	def deduceDescription(args: List[Expression], rt: TypeIdentifier): String = description(deduceTypes(args), rt)
+	private def bytecodify(ti: TypeIdentifier): String = if (ti.name.size == 1) ti.name else "L" + ti.name.replaceAll("\\.", "/") + ";"
+	private def description(pts: List[TypeIdentifier], rt: TypeIdentifier): String = "(" + pts.map(bytecodify).mkString + ")" + bytecodify(rt)
+	private def deduceDescription(args: List[Expression], rt: TypeIdentifier): String = description(deduceTypes(args), rt)
 
-	def deduceTypes(args: List[Expression]): List[TypeIdentifier] = args map {
+	private def deduceTypes(args: List[Expression]): List[TypeIdentifier] = args map {
 		case BoolLiteral(v) => TypeIdentifier(Types.BOOL)
 		case IntLiteral(v) => TypeIdentifier(Types.INT)
 		case StringLiteral(v) => TypeIdentifier(Types.STRING)
-		case semanticFunctionApplication: SemanticFunctionApplication => semanticFunctionApplication.returnType
+		//		case semanticFunctionApplication: SemanticFunctionApplication => semanticFunctionApplication.returnType
 		case x => throw new RuntimeException(x.toString())
 	}
 
